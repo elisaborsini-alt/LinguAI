@@ -1,0 +1,2559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LinguaAI — Premium Language Coach</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Warm Ink Palette - Human-Tech Design System */
+      --primary: #2C2C2C;           /* Deep Charcoal */
+      --primary-light: #4A4A4A;     /* Graphite */
+      --primary-dark: #1A1A1A;
+
+      --secondary: #8B7E74;         /* Warm Taupe */
+      --secondary-light: #A69B91;
+      --secondary-dark: #6B5F56;
+
+      --accent: #C67B5C;            /* Terracotta */
+      --accent-light: #FDF5F0;      /* Accent Light */
+      --accent-dark: #A86548;
+      --accent-hover: #B36B4C;
+
+      --success: #4A7C59;           /* Muted Green */
+      --warning: #D4A84B;           /* Warm Amber */
+
+      /* Surfaces - Warm & Light */
+      --surface-primary: #FAF8F5;   /* Soft Cream */
+      --surface-secondary: #F5F2EE;
+      --surface-elevated: #FFFFFF;
+      --surface-muted: #E8E4DF;     /* Stone */
+      --surface-overlay: rgba(44, 44, 44, 0.6);
+
+      /* Text */
+      --text-primary: #2C2C2C;      /* Deep Charcoal */
+      --text-secondary: #4A4A4A;    /* Graphite */
+      --text-tertiary: #8B7E74;     /* Warm Taupe */
+      --text-inverse: #FFFFFF;
+
+      /* Borders */
+      --border-light: #E8E4DF;
+      --border-medium: #D5D0CA;
+
+      /* Animation */
+      --duration-fast: 200ms;
+      --duration-normal: 300ms;
+      --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #E8E4DF 0%, #FAF8F5 50%, #F5F2EE 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .phone-frame {
+      width: 375px;
+      height: 812px;
+      background: var(--surface-primary);
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.04),
+        0 8px 24px rgba(0, 0, 0, 0.08),
+        0 24px 48px rgba(0, 0, 0, 0.06);
+      position: relative;
+      border: 1px solid var(--border-light);
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      animation: fadeIn var(--duration-normal) var(--ease-out);
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Navigation Dots */
+    .nav-dots {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      background: var(--surface-elevated);
+      padding: 12px 20px;
+      border-radius: 30px;
+      border: 1px solid var(--border-light);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .nav-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border-light);
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-out);
+    }
+
+    .nav-dot.active {
+      background: var(--accent);
+      width: 24px;
+      border-radius: 5px;
+    }
+
+    .nav-dot:hover {
+      transform: scale(1.1);
+      background: var(--secondary);
+    }
+
+    /* Welcome Screen */
+    .welcome-screen {
+      background: var(--surface-primary);
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo {
+      font-family: 'Source Serif Pro', Georgia, serif;
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-glow {
+      width: 100px;
+      height: 100px;
+      background: var(--accent-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+      border: 2px solid var(--accent);
+      transition: transform var(--duration-normal) var(--ease-out);
+    }
+
+    .logo-glow:hover {
+      transform: scale(1.02);
+    }
+
+    .logo-glow span {
+      font-size: 42px;
+    }
+
+    .tagline {
+      font-family: 'Source Serif Pro', Georgia, serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.35;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--text-inverse);
+      border: none;
+      padding: 16px 40px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-out);
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.01em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(198, 123, 92, 0.25);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .link-text {
+      color: var(--text-tertiary);
+      font-size: 14px;
+      margin-top: 20px;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+      transition: color var(--duration-fast);
+    }
+
+    .link-text:hover {
+      color: var(--accent);
+    }
+
+    /* Form Screens */
+    .form-screen {
+      background: var(--surface-primary);
+      padding: 60px 24px 24px;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 60px;
+      left: 20px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-light);
+      font-size: 20px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 10px 14px;
+      border-radius: 8px;
+      transition: all var(--duration-fast);
+    }
+
+    .back-btn:hover {
+      background: var(--surface-muted);
+      border-color: var(--border-medium);
+      color: var(--text-primary);
+    }
+
+    .screen-title {
+      font-family: 'Source Serif Pro', Georgia, serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.35;
+      margin-bottom: 8px;
+      margin-top: 20px;
+    }
+
+    .screen-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border-light);
+      background: var(--surface-primary);
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-light);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .language-list {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 100px;
+    }
+
+    .language-item {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      background: var(--surface-elevated);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-out);
+      border: 1px solid var(--border-light);
+    }
+
+    .language-item:hover {
+      background: var(--surface-muted);
+      border-color: var(--border-medium);
+    }
+
+    .language-item.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .language-item .flag {
+      font-size: 28px;
+      margin-right: 16px;
+    }
+
+    .language-item .name {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .language-item .check {
+      margin-left: auto;
+      color: var(--accent);
+      font-size: 20px;
+      opacity: 0;
+    }
+
+    .language-item.selected .check {
+      opacity: 1;
+    }
+
+    .fixed-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px 24px 40px;
+      background: linear-gradient(to top, var(--surface-primary) 70%, transparent);
+    }
+
+    .btn-continue {
+      width: 100%;
+      padding: 16px;
+      background: var(--accent);
+      color: var(--text-inverse);
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all var(--duration-fast) var(--ease-out);
+    }
+
+    .btn-continue:disabled {
+      background: var(--surface-muted);
+      color: var(--text-tertiary);
+      cursor: not-allowed;
+    }
+
+    .btn-continue:not(:disabled):hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(198, 123, 92, 0.25);
+    }
+
+    /* Multi-select Grid */
+    .language-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding-bottom: 100px;
+    }
+
+    .language-chip {
+      display: flex;
+      align-items: center;
+      padding: 14px;
+      background: var(--surface-elevated);
+      border-radius: 12px;
+      cursor: pointer;
+      border: 1px solid var(--border-light);
+      transition: all var(--duration-fast) var(--ease-out);
+    }
+
+    .language-chip:hover {
+      border-color: var(--border-medium);
+      background: var(--surface-muted);
+    }
+
+    .language-chip.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .language-chip .flag {
+      font-size: 22px;
+      margin-right: 10px;
+    }
+
+    .language-chip .name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .language-chip .badge {
+      font-size: 10px;
+      color: var(--warning);
+      margin-left: auto;
+    }
+
+    /* Goal Cards */
+    .goal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding-bottom: 100px;
+    }
+
+    .goal-card {
+      background: var(--surface-elevated);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      border: 1px solid var(--border-light);
+      transition: all var(--duration-fast) var(--ease-out);
+      position: relative;
+    }
+
+    .goal-card:hover {
+      border-color: var(--border-medium);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .goal-card.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .goal-card .icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .goal-card .title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      position: relative;
+      z-index: 1;
+      margin-bottom: 4px;
+    }
+
+    .goal-card .desc {
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Option Cards (large) */
+    .option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-bottom: 100px;
+    }
+
+    .option-card {
+      background: var(--surface-elevated);
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      border: 1px solid var(--border-light);
+      transition: all var(--duration-fast) var(--ease-out);
+      position: relative;
+    }
+
+    .option-card:hover {
+      border-color: var(--border-medium);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .option-card.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .option-card .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .option-card .emoji {
+      font-size: 24px;
+      margin-right: 12px;
+    }
+
+    .option-card .title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .option-card .desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      padding-left: 36px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hint-text {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    /* Variant Screen */
+    .variant-lang-flag {
+      font-size: 64px;
+      text-align: center;
+      margin-bottom: 16px;
+      margin-top: 20px;
+    }
+
+    #screen-variants .screen-title {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    #screen-variants .screen-subtitle {
+      text-align: center;
+    }
+
+    /* Voice Selection */
+    .voice-selection {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .voice-card {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      background: var(--surface-elevated);
+      border-radius: 12px;
+      cursor: pointer;
+      border: 1px solid var(--border-light);
+      transition: all var(--duration-fast) var(--ease-out);
+      gap: 16px;
+    }
+
+    .voice-card:hover {
+      border-color: var(--border-medium);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .voice-card.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .voice-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+      position: relative;
+      border: 2px solid var(--border-light);
+    }
+
+    .voice-avatar.female {
+      background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD9 100%);
+      border-color: #F48FB1;
+    }
+
+    .voice-avatar.male {
+      background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+      border-color: #64B5F6;
+    }
+
+    .voice-info {
+      flex: 1;
+    }
+
+    .voice-name {
+      font-family: 'Source Serif Pro', Georgia, serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .voice-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .voice-preview {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--surface-muted);
+      border: 1px solid var(--border-light);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--duration-fast);
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .voice-preview:hover {
+      background: var(--accent);
+      color: var(--text-inverse);
+      border-color: var(--accent);
+    }
+
+    /* Ready Screen */
+    .ready-screen {
+      background: var(--surface-primary);
+      justify-content: center;
+      align-items: center;
+      padding: 40px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .success-icon {
+      font-size: 56px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .ready-title {
+      font-family: 'Source Serif Pro', Georgia, serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .summary-card {
+      background: var(--surface-elevated);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: left;
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border-light);
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .summary-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .summary-item:last-child {
+      border-bottom: none;
+    }
+
+    .summary-item .icon {
+      font-size: 16px;
+      margin-right: 12px;
+      width: 24px;
+    }
+
+    .summary-item .label {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-right: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .summary-item .value {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent);
+      margin-left: auto;
+    }
+
+    .ready-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .skip-link {
+      color: var(--text-tertiary);
+      font-size: 13px;
+      margin-top: 16px;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+      transition: color var(--duration-fast);
+    }
+
+    .skip-link:hover {
+      color: var(--accent);
+    }
+
+    /* Call Screen */
+    .call-screen {
+      background: var(--surface-primary);
+      justify-content: space-between;
+      padding: 0;
+      position: relative;
+    }
+
+    .call-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 60px 20px 16px;
+      background: var(--surface-elevated);
+      border-bottom: 1px solid var(--border-light);
+      position: relative;
+      z-index: 1;
+    }
+
+    .call-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .call-close {
+      background: var(--surface-muted);
+      border: 1px solid var(--border-light);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 18px;
+      cursor: pointer;
+      transition: all var(--duration-fast);
+    }
+
+    .call-close:hover {
+      border-color: var(--border-medium);
+      color: var(--text-primary);
+    }
+
+    .call-header-info {
+      color: var(--text-primary);
+    }
+
+    .call-topic {
+      font-size: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+
+    .call-topic-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .call-mute {
+      background: var(--surface-muted);
+      border: 1px solid var(--border-light);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 16px;
+      cursor: pointer;
+      transition: all var(--duration-fast);
+    }
+
+    .call-mute:hover {
+      border-color: var(--border-medium);
+      color: var(--text-primary);
+    }
+
+    .call-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Chat Transcript */
+    .chat-transcript {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: var(--surface-secondary);
+    }
+
+    .chat-message {
+      max-width: 85%;
+      animation: messageIn 0.3s var(--ease-out);
+    }
+
+    @keyframes messageIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-message.ai {
+      align-self: flex-start;
+    }
+
+    .chat-message.user {
+      align-self: flex-end;
+    }
+
+    .chat-message .bubble {
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .chat-message.ai .bubble {
+      background: var(--surface-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border-light);
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .chat-message.user .bubble {
+      background: var(--accent);
+      color: var(--text-inverse);
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-message .sender {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      margin-bottom: 4px;
+      padding-left: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+
+    .chat-message.ai .sender {
+      color: var(--secondary);
+    }
+
+    .chat-message.user .sender {
+      text-align: right;
+      padding-right: 4px;
+      color: var(--accent);
+    }
+
+    .chat-message.typing .bubble {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-light);
+      padding: 18px 24px;
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 6px;
+    }
+
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      background: var(--secondary);
+      border-radius: 50%;
+      animation: typingDot 1.4s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingDot {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* Voice Input Bar */
+    .voice-input-bar {
+      background: var(--surface-elevated);
+      padding: 16px 20px 32px;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .voice-status {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mini-waveform {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 24px;
+    }
+
+    .mini-waveform .bar {
+      width: 3px;
+      background: var(--border-medium);
+      border-radius: 2px;
+      animation: miniWave 1s ease-in-out infinite;
+    }
+
+    .mini-waveform.active .bar {
+      background: var(--accent);
+    }
+
+    @keyframes miniWave {
+      0%, 100% { height: 6px; }
+      50% { height: 20px; }
+    }
+
+    .mini-waveform .bar:nth-child(1) { animation-delay: 0s; }
+    .mini-waveform .bar:nth-child(2) { animation-delay: 0.15s; }
+    .mini-waveform .bar:nth-child(3) { animation-delay: 0.3s; }
+    .mini-waveform .bar:nth-child(4) { animation-delay: 0.45s; }
+    .mini-waveform .bar:nth-child(5) { animation-delay: 0.3s; }
+    .mini-waveform .bar:nth-child(6) { animation-delay: 0.15s; }
+
+    .voice-status-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .voice-status-text.active {
+      color: var(--accent);
+    }
+
+    .call-timer-small {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .end-call-btn {
+      width: 52px;
+      height: 52px;
+      background: transparent;
+      border: 2px solid #D32F2F;
+      border-radius: 12px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all var(--duration-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #D32F2F;
+    }
+
+    .end-call-btn:hover {
+      background: #D32F2F;
+      color: white;
+      transform: scale(1.02);
+    }
+
+    /* Legacy styles for compatibility */
+    .avatar-container {
+      width: 120px;
+      height: 120px;
+      background: var(--surface-muted);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      position: relative;
+      border: 2px solid var(--border-light);
+    }
+
+    .avatar-container.speaking {
+      animation: avatarPulse 1.5s infinite;
+    }
+
+    @keyframes avatarPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(139, 126, 116, 0.3); }
+      50% { box-shadow: 0 0 0 12px rgba(139, 126, 116, 0); }
+    }
+
+    .avatar-container.user-speaking {
+      animation: avatarPulseWarm 1.5s infinite;
+    }
+
+    @keyframes avatarPulseWarm {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(198, 123, 92, 0.3); }
+      50% { box-shadow: 0 0 0 12px rgba(198, 123, 92, 0); }
+    }
+
+    .avatar-status {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .waveform {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      height: 50px;
+      margin-bottom: 16px;
+    }
+
+    .waveform-bar {
+      width: 4px;
+      background: var(--secondary);
+      border-radius: 2px;
+      animation: wave 1s ease-in-out infinite;
+    }
+
+    .waveform-bar.warm {
+      background: var(--accent);
+    }
+
+    @keyframes wave {
+      0%, 100% { height: 8px; }
+      50% { height: 40px; }
+    }
+
+    .waveform-bar:nth-child(1) { animation-delay: 0s; }
+    .waveform-bar:nth-child(2) { animation-delay: 0.1s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.2s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.3s; }
+    .waveform-bar:nth-child(5) { animation-delay: 0.4s; }
+    .waveform-bar:nth-child(6) { animation-delay: 0.5s; }
+    .waveform-bar:nth-child(7) { animation-delay: 0.6s; }
+    .waveform-bar:nth-child(8) { animation-delay: 0.7s; }
+    .waveform-bar:nth-child(9) { animation-delay: 0.8s; }
+    .waveform-bar:nth-child(10) { animation-delay: 0.9s; }
+    .waveform-bar:nth-child(11) { animation-delay: 0.8s; }
+    .waveform-bar:nth-child(12) { animation-delay: 0.7s; }
+    .waveform-bar:nth-child(13) { animation-delay: 0.6s; }
+    .waveform-bar:nth-child(14) { animation-delay: 0.5s; }
+    .waveform-bar:nth-child(15) { animation-delay: 0.4s; }
+
+    .call-timer {
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 1px;
+    }
+
+    .call-status {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+
+    .call-footer {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Call Summary Screen */
+    .summary-screen {
+      background: var(--surface-primary);
+      padding: 60px 24px 24px;
+      overflow-y: auto;
+    }
+
+    .summary-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .summary-header .back-btn {
+      position: static;
+      margin-right: 12px;
+    }
+
+    .summary-header h1 {
+      font-family: 'Source Serif Pro', Georgia, serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .call-info-card {
+      background: var(--surface-elevated);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border-light);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .call-info-title {
+      font-family: 'Source Serif Pro', Georgia, serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .call-info-meta {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .score-section {
+      margin-bottom: 32px;
+    }
+
+    .score-item {
+      margin-bottom: 16px;
+    }
+
+    .score-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .score-label {
+      font-size: 15px;
+      color: var(--text-primary);
+    }
+
+    .score-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .score-bar {
+      height: 8px;
+      background: var(--surface-muted);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .score-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s var(--ease-out);
+    }
+
+    .score-fill.high { background: var(--success); }
+    .score-fill.medium { background: var(--warning); }
+    .score-fill.low { background: var(--accent); }
+
+    .score-hint {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .feedback-section {
+      margin-bottom: 24px;
+    }
+
+    .feedback-card {
+      background: var(--surface-elevated);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border-light);
+    }
+
+    .feedback-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feedback-card ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .feedback-card li {
+      font-size: 14px;
+      color: var(--text-secondary);
+      padding: 6px 0;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .feedback-card li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      padding-bottom: 40px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 16px;
+      background: transparent;
+      border: 1.5px solid var(--border-medium);
+      color: var(--text-primary);
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all var(--duration-fast);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text-primary);
+      background: var(--surface-muted);
+    }
+
+    .action-buttons .btn-primary {
+      flex: 1;
+      padding: 16px;
+    }
+
+    /* Thinking dots */
+    .thinking-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .thinking-dots span {
+      width: 12px;
+      height: 12px;
+      background: var(--secondary);
+      border-radius: 50%;
+      animation: thinking 1.4s infinite;
+    }
+
+    .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes thinking {
+      0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+      40% { opacity: 1; transform: scale(1); }
+    }
+
+    /* State toggles in demo */
+    .state-toggle {
+      position: absolute;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      background: var(--surface-elevated);
+      padding: 8px;
+      border-radius: 12px;
+      border: 1px solid var(--border-light);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .state-btn {
+      padding: 8px 12px;
+      background: var(--surface-muted);
+      border: none;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 11px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all var(--duration-fast);
+    }
+
+    .state-btn:hover {
+      background: var(--border-medium);
+    }
+
+    .state-btn.active {
+      background: var(--accent);
+      color: var(--text-inverse);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <!-- Screen 1: Welcome -->
+    <div class="screen welcome-screen active" id="screen-1">
+      <div class="logo-glow">
+        <span>🗣️</span>
+      </div>
+      <div class="logo">LinguaAI</div>
+      <h1 class="tagline">Speak like yourself,<br>in any language.</h1>
+      <p class="subtitle">Your AI conversation partner<br>that learns how you learn.</p>
+      <button class="btn-primary" onclick="goToScreen(2)">Get Started →</button>
+      <p class="link-text">Already have an account? Sign in</p>
+    </div>
+
+    <!-- Screen 2: Native Language -->
+    <div class="screen form-screen" id="screen-2">
+      <button class="back-btn" onclick="goToScreen(1)">←</button>
+      <h1 class="screen-title">What language feels<br>like home?</h1>
+      <p class="screen-subtitle">We'll explain everything in this language.</p>
+      <input type="text" class="search-input" placeholder="🔍 Search languages...">
+      <div class="language-list">
+        <div class="language-item" onclick="selectLanguage(this)">
+          <span class="flag">🇮🇹</span>
+          <span class="name">Italiano</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="language-item" onclick="selectLanguage(this)">
+          <span class="flag">🇬🇧</span>
+          <span class="name">English</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="language-item" onclick="selectLanguage(this)">
+          <span class="flag">🇪🇸</span>
+          <span class="name">Español</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="language-item" onclick="selectLanguage(this)">
+          <span class="flag">🇫🇷</span>
+          <span class="name">Français</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="language-item" onclick="selectLanguage(this)">
+          <span class="flag">🇩🇪</span>
+          <span class="name">Deutsch</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="language-item" onclick="selectLanguage(this)">
+          <span class="flag">🇵🇹</span>
+          <span class="name">Português</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="language-item" onclick="selectLanguage(this)">
+          <span class="flag">🇯🇵</span>
+          <span class="name">日本語</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="language-item" onclick="selectLanguage(this)">
+          <span class="flag">🇨🇳</span>
+          <span class="name">中文</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="language-item" onclick="selectLanguage(this)">
+          <span class="flag">🇰🇷</span>
+          <span class="name">한국어</span>
+          <span class="check">✓</span>
+        </div>
+      </div>
+      <div class="fixed-bottom">
+        <button class="btn-continue" id="btn-native" disabled onclick="goToScreen(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Screen 3: Languages to Learn -->
+    <div class="screen form-screen" id="screen-3">
+      <button class="back-btn" onclick="goToScreen(2)">←</button>
+      <h1 class="screen-title">Which languages would<br>you like to practice?</h1>
+      <p class="screen-subtitle">Choose as many as you like. You can always add more later.</p>
+      <div class="language-grid">
+        <div class="language-chip" onclick="toggleChip(this)">
+          <span class="flag">🇬🇧</span>
+          <span class="name">English</span>
+          <span class="badge">⭐</span>
+        </div>
+        <div class="language-chip" onclick="toggleChip(this)">
+          <span class="flag">🇪🇸</span>
+          <span class="name">Spanish</span>
+          <span class="badge">⭐</span>
+        </div>
+        <div class="language-chip" onclick="toggleChip(this)">
+          <span class="flag">🇫🇷</span>
+          <span class="name">French</span>
+        </div>
+        <div class="language-chip" onclick="toggleChip(this)">
+          <span class="flag">🇩🇪</span>
+          <span class="name">German</span>
+        </div>
+        <div class="language-chip" onclick="toggleChip(this)">
+          <span class="flag">🇮🇹</span>
+          <span class="name">Italian</span>
+        </div>
+        <div class="language-chip" onclick="toggleChip(this)">
+          <span class="flag">🇵🇹</span>
+          <span class="name">Portuguese</span>
+        </div>
+        <div class="language-chip" onclick="toggleChip(this)">
+          <span class="flag">🇯🇵</span>
+          <span class="name">Japanese</span>
+        </div>
+        <div class="language-chip" onclick="toggleChip(this)">
+          <span class="flag">🇨🇳</span>
+          <span class="name">Chinese</span>
+        </div>
+        <div class="language-chip" onclick="toggleChip(this)">
+          <span class="flag">🇰🇷</span>
+          <span class="name">Korean</span>
+        </div>
+        <div class="language-chip" onclick="toggleChip(this)">
+          <span class="flag">🇷🇺</span>
+          <span class="name">Russian</span>
+        </div>
+      </div>
+      <div class="fixed-bottom">
+        <button class="btn-continue" id="btn-learn" disabled onclick="goToVariants()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Screen 3b: Language Variants -->
+    <div class="screen form-screen" id="screen-variants">
+      <button class="back-btn" onclick="goBackFromVariants()">←</button>
+      <div class="variant-lang-flag" id="variant-flag">🇵🇹</div>
+      <h1 class="screen-title" id="variant-title">Portuguese</h1>
+      <p class="screen-subtitle" id="variant-subtitle">Which variant would you like to practice?</p>
+      <div class="option-list" id="variant-options">
+        <!-- Populated dynamically -->
+      </div>
+      <div class="fixed-bottom">
+        <button class="btn-continue" id="btn-variant" disabled onclick="selectVariantAndContinue()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Screen 4: Goals -->
+    <div class="screen form-screen" id="screen-4">
+      <button class="back-btn" onclick="goToScreen(3)">←</button>
+      <h1 class="screen-title">What brings you here?</h1>
+      <p class="screen-subtitle">This helps us personalize your conversations.</p>
+      <div class="goal-grid">
+        <div class="goal-card" onclick="toggleGoal(this)">
+          <div class="icon">💼</div>
+          <div class="title">Work</div>
+          <div class="desc">Meetings, emails, clients</div>
+        </div>
+        <div class="goal-card" onclick="toggleGoal(this)">
+          <div class="icon">✈️</div>
+          <div class="title">Travel</div>
+          <div class="desc">Navigate new places</div>
+        </div>
+        <div class="goal-card" onclick="toggleGoal(this)">
+          <div class="icon">💬</div>
+          <div class="title">Social</div>
+          <div class="desc">Make friends, connect</div>
+        </div>
+        <div class="goal-card" onclick="toggleGoal(this)">
+          <div class="icon">🎯</div>
+          <div class="title">Interviews</div>
+          <div class="desc">Prepare for job interviews</div>
+        </div>
+        <div class="goal-card" onclick="toggleGoal(this)">
+          <div class="icon">🎓</div>
+          <div class="title">Study</div>
+          <div class="desc">Academic language needs</div>
+        </div>
+        <div class="goal-card" onclick="toggleGoal(this)">
+          <div class="icon">🌍</div>
+          <div class="title">Moving</div>
+          <div class="desc">Relocating to a new country</div>
+        </div>
+      </div>
+      <div class="fixed-bottom">
+        <button class="btn-continue" id="btn-goals" disabled onclick="goToScreen(5)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Screen 5: Interaction Preference -->
+    <div class="screen form-screen" id="screen-5">
+      <button class="back-btn" onclick="goToScreen(4)">←</button>
+      <h1 class="screen-title">How do you prefer<br>to practice?</h1>
+      <p class="screen-subtitle"></p>
+      <div class="option-list">
+        <div class="option-card" onclick="selectOption(this, 5)">
+          <div class="header">
+            <span class="emoji">📞</span>
+            <span class="title">Voice Conversations</span>
+          </div>
+          <div class="desc">Talk naturally, like a phone call with a friend. Best for building fluency.</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 5)">
+          <div class="header">
+            <span class="emoji">💬</span>
+            <span class="title">Text + Voice</span>
+          </div>
+          <div class="desc">Type or speak — your choice. Take your time to think.</div>
+        </div>
+      </div>
+      <p class="hint-text">You can switch anytime in settings.</p>
+      <div class="fixed-bottom">
+        <button class="btn-continue" id="btn-mode" disabled onclick="goToScreen('voice')">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Screen 5b: Voice Selection -->
+    <div class="screen form-screen" id="screen-voice">
+      <button class="back-btn" onclick="goToScreen(5)">←</button>
+      <h1 class="screen-title" id="voice-title">Who would you like<br>to practice with?</h1>
+      <p class="screen-subtitle" id="voice-subtitle">Choose the voice of your AI coach.</p>
+      <div class="voice-selection">
+        <div class="voice-card" onclick="selectVoice(this, 'female')">
+          <div class="voice-avatar female">👩</div>
+          <div class="voice-info">
+            <div class="voice-name" id="voice-female-name">Sofia</div>
+            <div class="voice-desc" id="voice-female-desc">Warm and encouraging</div>
+          </div>
+          <button class="voice-preview" onclick="event.stopPropagation(); playVoicePreview('female')">▶</button>
+        </div>
+        <div class="voice-card" onclick="selectVoice(this, 'male')">
+          <div class="voice-avatar male">👨</div>
+          <div class="voice-info">
+            <div class="voice-name" id="voice-male-name">Marco</div>
+            <div class="voice-desc" id="voice-male-desc">Calm and patient</div>
+          </div>
+          <button class="voice-preview" onclick="event.stopPropagation(); playVoicePreview('male')">▶</button>
+        </div>
+      </div>
+      <p class="hint-text" id="voice-hint">You can change this later in settings.</p>
+      <div class="fixed-bottom">
+        <button class="btn-continue" id="btn-voice" disabled onclick="goToScreen(6)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Screen 6: Confidence Check -->
+    <div class="screen form-screen" id="screen-6">
+      <button class="back-btn" onclick="goToScreen('voice')">←</button>
+      <h1 class="screen-title">One quick question...</h1>
+      <p class="screen-subtitle" id="confidence-question">If someone started chatting with you in <span id="confidence-language">English</span> right now, how would you feel?</p>
+      <div class="option-list">
+        <div class="option-card" onclick="selectOption(this, 6)">
+          <div class="header">
+            <span class="emoji">😰</span>
+            <span class="title">I'd freeze up</span>
+          </div>
+          <div class="desc">I know some words but can't really have a chat</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 6)">
+          <div class="header">
+            <span class="emoji">😅</span>
+            <span class="title">I'd manage, somehow</span>
+          </div>
+          <div class="desc">Basic conversations work, but I make lots of mistakes</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 6)">
+          <div class="header">
+            <span class="emoji">🙂</span>
+            <span class="title">I'd be okay</span>
+          </div>
+          <div class="desc">I can chat, though complex topics are challenging</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 6)">
+          <div class="header">
+            <span class="emoji">😊</span>
+            <span class="title">I'd feel comfortable</span>
+          </div>
+          <div class="desc">I'm pretty confident, just want to sound more natural</div>
+        </div>
+      </div>
+      <p class="hint-text">This isn't a test — just helps us start at the right pace for you.</p>
+      <div class="fixed-bottom">
+        <button class="btn-continue" id="btn-confidence" disabled onclick="goToScreen(7)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Screen 7: Ready -->
+    <div class="screen ready-screen" id="screen-7">
+      <div class="success-icon">✨</div>
+      <h1 class="ready-title">You're all set!</h1>
+      <div class="summary-card">
+        <div class="summary-item">
+          <span class="icon">🏠</span>
+          <span class="label">Home:</span>
+          <span class="value" id="summary-home">Italiano</span>
+        </div>
+        <div class="summary-item">
+          <span class="icon">🎯</span>
+          <span class="label">Learning:</span>
+          <span class="value" id="summary-learning">English, Spanish</span>
+        </div>
+        <div class="summary-item">
+          <span class="icon">💼</span>
+          <span class="label">Goals:</span>
+          <span class="value" id="summary-goals">Work, Travel</span>
+        </div>
+        <div class="summary-item">
+          <span class="icon">📞</span>
+          <span class="label">Mode:</span>
+          <span class="value" id="summary-mode">Voice</span>
+        </div>
+        <div class="summary-item">
+          <span class="icon">🎙️</span>
+          <span class="label" id="label-voice">Coach:</span>
+          <span class="value" id="summary-voice">Sofia</span>
+        </div>
+      </div>
+      <p class="ready-subtitle">I'll adapt to your pace and remember<br>what we practice together.</p>
+      <button class="btn-primary" onclick="goToScreen(8)">Let's talk →</button>
+      <p class="skip-link">Skip for now</p>
+    </div>
+
+    <!-- Screen 8: Call Screen -->
+    <div class="screen call-screen" id="screen-8">
+      <div class="call-header">
+        <div class="call-header-left">
+          <button class="call-close" onclick="goToScreen(7)">×</button>
+          <div class="call-header-info">
+            <div class="call-topic">Topic</div>
+            <div class="call-topic-name">Job Interview Practice</div>
+          </div>
+        </div>
+        <button class="call-mute">🔇</button>
+      </div>
+
+      <div class="call-content">
+        <div class="chat-transcript" id="chat-transcript">
+          <div class="chat-message ai">
+            <div class="sender">LinguaAI</div>
+            <div class="bubble">Hi! I'm going to be your interviewer today. Let's practice for a job interview. Are you ready to begin?</div>
+          </div>
+          <div class="chat-message user">
+            <div class="sender">You</div>
+            <div class="bubble">Yes, I'm ready! I'm a bit nervous but excited to practice.</div>
+          </div>
+          <div class="chat-message ai">
+            <div class="sender">LinguaAI</div>
+            <div class="bubble">That's completely normal! Let's start with a common question: Can you tell me a little about yourself and your background?</div>
+          </div>
+          <div class="chat-message user">
+            <div class="sender">You</div>
+            <div class="bubble">Sure! I have been working as a software developer for three years. I'm passionate about creating user-friendly applications.</div>
+          </div>
+          <div class="chat-message ai" id="current-ai-message">
+            <div class="sender">LinguaAI</div>
+            <div class="bubble" id="ai-bubble">Great introduction! I noticed you used the present perfect tense correctly. Now, what would you say is your greatest strength?</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="voice-input-bar">
+        <div class="voice-status">
+          <div class="mini-waveform" id="mini-waveform">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
+          <span class="voice-status-text" id="voice-status-text">AI is speaking...</span>
+        </div>
+        <span class="call-timer-small" id="call-timer">05:32</span>
+        <button class="end-call-btn" onclick="goToScreen(9)">📞</button>
+      </div>
+
+      <!-- Demo state toggle -->
+      <div class="state-toggle" style="bottom: 100px;">
+        <button class="state-btn active" onclick="setCallState('ai-speaking')">AI</button>
+        <button class="state-btn" onclick="setCallState('thinking')">Think</button>
+        <button class="state-btn" onclick="setCallState('user-speaking')">You</button>
+      </div>
+    </div>
+
+    <!-- Screen 9: Call Summary -->
+    <div class="screen summary-screen" id="screen-9">
+      <div class="summary-header">
+        <button class="back-btn" onclick="goToScreen(8)">←</button>
+        <h1>Conversation Summary</h1>
+      </div>
+
+      <div class="call-info-card">
+        <div class="call-info-title">Job Interview Practice</div>
+        <div class="call-info-meta">Today, 3:42 PM · 8 min</div>
+      </div>
+
+      <div class="score-section">
+        <h2 class="section-title">Your Performance</h2>
+
+        <div class="score-item">
+          <div class="score-header">
+            <span class="score-label">Fluency</span>
+            <span class="score-value">78%</span>
+          </div>
+          <div class="score-bar">
+            <div class="score-fill high" style="width: 78%"></div>
+          </div>
+          <div class="score-hint">Smooth with occasional pauses</div>
+        </div>
+
+        <div class="score-item">
+          <div class="score-header">
+            <span class="score-label">Vocabulary</span>
+            <span class="score-value">65%</span>
+          </div>
+          <div class="score-bar">
+            <div class="score-fill medium" style="width: 65%"></div>
+          </div>
+          <div class="score-hint">Good basics, room to expand</div>
+        </div>
+
+        <div class="score-item">
+          <div class="score-header">
+            <span class="score-label">Grammar</span>
+            <span class="score-value">88%</span>
+          </div>
+          <div class="score-bar">
+            <div class="score-fill high" style="width: 88%"></div>
+          </div>
+          <div class="score-hint">Very few errors, nice!</div>
+        </div>
+      </div>
+
+      <div class="feedback-section">
+        <div class="feedback-card">
+          <h3>💡 What went well</h3>
+          <ul>
+            <li>Clear pronunciation</li>
+            <li>Good use of past tense</li>
+            <li>Natural conversation flow</li>
+          </ul>
+        </div>
+
+        <div class="feedback-card">
+          <h3>🌱 Focus areas</h3>
+          <ul>
+            <li>Try using more connectors (however, although, besides)</li>
+            <li>Practice conditional tenses</li>
+          </ul>
+        </div>
+
+        <div class="feedback-card">
+          <h3>📝 New expressions learned</h3>
+          <ul>
+            <li>"I'm passionate about..."</li>
+            <li>"In my previous role..."</li>
+            <li>"I'd be happy to..."</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-secondary" onclick="goToScreen(1)">Home</button>
+        <button class="btn-primary" onclick="goToScreen(8)">Practice Again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Dots -->
+  <div class="nav-dots">
+    <div class="nav-dot active" onclick="goToScreen(1)"></div>
+    <div class="nav-dot" onclick="goToScreen(2)"></div>
+    <div class="nav-dot" onclick="goToScreen(3)"></div>
+    <div class="nav-dot" onclick="goToScreen(4)"></div>
+    <div class="nav-dot" onclick="goToScreen(5)"></div>
+    <div class="nav-dot" onclick="goToScreen(6)"></div>
+    <div class="nav-dot" onclick="goToScreen(7)"></div>
+    <div class="nav-dot" onclick="goToScreen(8)"></div>
+    <div class="nav-dot" onclick="goToScreen(9)"></div>
+  </div>
+
+  <script>
+    let currentScreen = 1;
+    let currentLang = 'en';
+    let userSelections = {
+      nativeLanguage: null,
+      nativeCode: null,
+      learningLanguages: [],
+      goals: [],
+      mode: null,
+      voice: null,
+      voiceName: null
+    };
+
+    // Translations
+    const translations = {
+      en: {
+        // Screen 3
+        screen3Title: "Which languages would<br>you like to practice?",
+        screen3Subtitle: "Choose as many as you like. You can always add more later.",
+        continueWith: "Continue with",
+        language: "language",
+        languages: "languages",
+        continue: "Continue →",
+        // Screen 4
+        screen4Title: "What brings you here?",
+        screen4Subtitle: "This helps us personalize your conversations.",
+        goalWork: "Work",
+        goalWorkDesc: "Meetings, emails, clients",
+        goalTravel: "Travel",
+        goalTravelDesc: "Navigate new places",
+        goalSocial: "Social",
+        goalSocialDesc: "Make friends, connect",
+        goalInterviews: "Interviews",
+        goalInterviewsDesc: "Prepare for job interviews",
+        goalStudy: "Study",
+        goalStudyDesc: "Academic language needs",
+        goalMoving: "Moving",
+        goalMovingDesc: "Relocating to a new country",
+        // Screen 5
+        screen5Title: "How do you prefer<br>to practice?",
+        voiceTitle: "Voice Conversations",
+        voiceDesc: "Talk naturally, like a phone call with a friend. Best for building fluency.",
+        textTitle: "Text + Voice",
+        textDesc: "Type or speak — your choice. Take your time to think.",
+        switchHint: "You can switch anytime in settings.",
+        // Screen 6
+        screen6Title: "One quick question...",
+        screen6Subtitle: "If someone started chatting with you in {lang} right now, how would you feel?",
+        conf1Title: "I'd freeze up",
+        conf1Desc: "I know some words but can't really have a chat",
+        conf2Title: "I'd manage, somehow",
+        conf2Desc: "Basic conversations work, but I make lots of mistakes",
+        conf3Title: "I'd be okay",
+        conf3Desc: "I can chat, though complex topics are challenging",
+        conf4Title: "I'd feel comfortable",
+        conf4Desc: "I'm pretty confident, just want to sound more natural",
+        confHint: "This isn't a test — just helps us start at the right pace for you.",
+        // Voice Selection
+        voiceTitle: "Who would you like<br>to practice with?",
+        voiceSubtitle: "Choose the voice of your AI coach.",
+        voiceFemaleName: "Sofia",
+        voiceFemaleDesc: "Warm and encouraging",
+        voiceMaleName: "Marco",
+        voiceMaleDesc: "Calm and patient",
+        voiceHint: "You can change this later in settings.",
+        // Screen 7
+        screen7Title: "You're all set!",
+        screen7Subtitle: "I'll adapt to your pace and remember<br>what we practice together.",
+        labelHome: "Home:",
+        labelLearning: "Learning:",
+        labelGoals: "Goals:",
+        labelMode: "Mode:",
+        labelVoice: "Coach:",
+        letsTalk: "Let's talk →",
+        skipForNow: "Skip for now",
+        // Call
+        topic: "Topic",
+        listening: "Listening...",
+        speaking: "Speaking...",
+        thinking: "Thinking...",
+        // Summary
+        summaryTitle: "Conversation Summary",
+        performance: "Your Performance",
+        fluency: "Fluency",
+        vocabulary: "Vocabulary",
+        grammar: "Grammar",
+        whatWentWell: "What went well",
+        focusAreas: "Focus areas",
+        newExpressions: "New expressions learned",
+        home: "Home",
+        practiceAgain: "Practice Again"
+      },
+      it: {
+        // Screen 3
+        screen3Title: "Quali lingue vorresti<br>esercitare?",
+        screen3Subtitle: "Scegli quante ne vuoi. Potrai sempre aggiungerne altre.",
+        continueWith: "Continua con",
+        language: "lingua",
+        languages: "lingue",
+        continue: "Continua →",
+        // Screen 4
+        screen4Title: "Cosa ti porta qui?",
+        screen4Subtitle: "Ci aiuta a personalizzare le tue conversazioni.",
+        goalWork: "Lavoro",
+        goalWorkDesc: "Riunioni, email, clienti",
+        goalTravel: "Viaggi",
+        goalTravelDesc: "Muoversi in posti nuovi",
+        goalSocial: "Sociale",
+        goalSocialDesc: "Fare amicizia, connettersi",
+        goalInterviews: "Colloqui",
+        goalInterviewsDesc: "Prepararsi per colloqui di lavoro",
+        goalStudy: "Studio",
+        goalStudyDesc: "Esigenze accademiche",
+        goalMoving: "Trasferimento",
+        goalMovingDesc: "Trasferirsi in un nuovo paese",
+        // Screen 5
+        screen5Title: "Come preferisci<br>esercitarti?",
+        voiceTitle: "Conversazioni vocali",
+        voiceDesc: "Parla naturalmente, come una telefonata con un amico. Ideale per la fluenza.",
+        textTitle: "Testo + Voce",
+        textDesc: "Scrivi o parla — a tua scelta. Prenditi il tempo per pensare.",
+        switchHint: "Puoi cambiare quando vuoi nelle impostazioni.",
+        // Screen 6
+        screen6Title: "Una domanda veloce...",
+        screen6Subtitle: "Se qualcuno iniziasse a parlarti in {lang} adesso, come ti sentiresti?",
+        conf1Title: "Mi bloccherei",
+        conf1Desc: "Conosco alcune parole ma non riesco a conversare",
+        conf2Title: "Me la caverei, in qualche modo",
+        conf2Desc: "Le conversazioni base funzionano, ma faccio molti errori",
+        conf3Title: "Andrebbe bene",
+        conf3Desc: "Riesco a parlare, anche se gli argomenti complessi sono difficili",
+        conf4Title: "Mi sentirei a mio agio",
+        conf4Desc: "Sono abbastanza sicuro/a, voglio solo sembrare più naturale",
+        confHint: "Non è un test — ci aiuta solo a partire col ritmo giusto per te.",
+        // Voice Selection
+        voiceTitle: "Con chi vorresti<br>esercitarti?",
+        voiceSubtitle: "Scegli la voce del tuo coach AI.",
+        voiceFemaleName: "Sofia",
+        voiceFemaleDesc: "Calda e incoraggiante",
+        voiceMaleName: "Marco",
+        voiceMaleDesc: "Calmo e paziente",
+        voiceHint: "Puoi cambiare quando vuoi nelle impostazioni.",
+        // Screen 7
+        screen7Title: "Tutto pronto!",
+        screen7Subtitle: "Mi adatterò al tuo ritmo e ricorderò<br>quello che esercitiamo insieme.",
+        labelHome: "Lingua madre:",
+        labelLearning: "Imparo:",
+        labelGoals: "Obiettivi:",
+        labelMode: "Modalità:",
+        labelVoice: "Coach:",
+        letsTalk: "Iniziamo →",
+        skipForNow: "Salta per ora",
+        // Call
+        topic: "Argomento",
+        listening: "In ascolto...",
+        speaking: "Sta parlando...",
+        thinking: "Sta pensando...",
+        // Summary
+        summaryTitle: "Riepilogo conversazione",
+        performance: "Le tue prestazioni",
+        fluency: "Fluidità",
+        vocabulary: "Vocabolario",
+        grammar: "Grammatica",
+        whatWentWell: "Cosa è andato bene",
+        focusAreas: "Aree su cui concentrarsi",
+        newExpressions: "Nuove espressioni imparate",
+        home: "Home",
+        practiceAgain: "Esercitati ancora"
+      },
+      es: {
+        screen3Title: "¿Qué idiomas te gustaría<br>practicar?",
+        screen3Subtitle: "Elige los que quieras. Siempre puedes añadir más después.",
+        continueWith: "Continuar con",
+        language: "idioma",
+        languages: "idiomas",
+        continue: "Continuar →",
+        screen4Title: "¿Qué te trae por aquí?",
+        screen4Subtitle: "Nos ayuda a personalizar tus conversaciones.",
+        goalWork: "Trabajo", goalWorkDesc: "Reuniones, emails, clientes",
+        goalTravel: "Viajes", goalTravelDesc: "Moverte por lugares nuevos",
+        goalSocial: "Social", goalSocialDesc: "Hacer amigos, conectar",
+        goalInterviews: "Entrevistas", goalInterviewsDesc: "Prepararte para entrevistas",
+        goalStudy: "Estudios", goalStudyDesc: "Necesidades académicas",
+        goalMoving: "Mudanza", goalMovingDesc: "Mudarte a un nuevo país",
+        screen5Title: "¿Cómo prefieres<br>practicar?",
+        voiceTitle: "Conversaciones de voz",
+        voiceDesc: "Habla naturalmente, como una llamada con un amigo. Ideal para la fluidez.",
+        textTitle: "Texto + Voz",
+        textDesc: "Escribe o habla — tú eliges. Tómate tu tiempo para pensar.",
+        switchHint: "Puedes cambiar en cualquier momento en ajustes.",
+        screen6Title: "Una pregunta rápida...",
+        screen6Subtitle: "Si alguien empezara a hablarte en {lang} ahora mismo, ¿cómo te sentirías?",
+        conf1Title: "Me bloquearía", conf1Desc: "Sé algunas palabras pero no puedo conversar",
+        conf2Title: "Me las arreglaría", conf2Desc: "Las conversaciones básicas funcionan, pero cometo muchos errores",
+        conf3Title: "Estaría bien", conf3Desc: "Puedo hablar, aunque los temas complejos son difíciles",
+        conf4Title: "Me sentiría cómodo/a", conf4Desc: "Tengo confianza, solo quiero sonar más natural",
+        confHint: "No es un examen — solo nos ayuda a empezar al ritmo adecuado para ti.",
+        screen7Title: "¡Todo listo!",
+        screen7Subtitle: "Me adaptaré a tu ritmo y recordaré<br>lo que practiquemos juntos.",
+        labelHome: "Idioma nativo:", labelLearning: "Aprendiendo:", labelGoals: "Objetivos:", labelMode: "Modo:",
+        letsTalk: "Empezamos →", skipForNow: "Saltar por ahora",
+        topic: "Tema", listening: "Escuchando...", speaking: "Hablando...", thinking: "Pensando...",
+        summaryTitle: "Resumen de la conversación", performance: "Tu rendimiento",
+        fluency: "Fluidez", vocabulary: "Vocabulario", grammar: "Gramática",
+        whatWentWell: "Lo que salió bien", focusAreas: "Áreas de enfoque", newExpressions: "Nuevas expresiones aprendidas",
+        home: "Inicio", practiceAgain: "Practicar de nuevo"
+      },
+      fr: {
+        screen3Title: "Quelles langues voulez-vous<br>pratiquer ?",
+        screen3Subtitle: "Choisissez autant que vous voulez. Vous pourrez toujours en ajouter plus tard.",
+        continueWith: "Continuer avec",
+        language: "langue",
+        languages: "langues",
+        continue: "Continuer →",
+        screen4Title: "Qu'est-ce qui vous amène ici ?",
+        screen4Subtitle: "Cela nous aide à personnaliser vos conversations.",
+        goalWork: "Travail", goalWorkDesc: "Réunions, emails, clients",
+        goalTravel: "Voyages", goalTravelDesc: "Se déplacer dans de nouveaux endroits",
+        goalSocial: "Social", goalSocialDesc: "Se faire des amis, se connecter",
+        goalInterviews: "Entretiens", goalInterviewsDesc: "Se préparer aux entretiens",
+        goalStudy: "Études", goalStudyDesc: "Besoins académiques",
+        goalMoving: "Déménagement", goalMovingDesc: "S'installer dans un nouveau pays",
+        screen5Title: "Comment préférez-vous<br>pratiquer ?",
+        voiceTitle: "Conversations vocales",
+        voiceDesc: "Parlez naturellement, comme un appel avec un ami. Idéal pour la fluidité.",
+        textTitle: "Texte + Voix",
+        textDesc: "Tapez ou parlez — à vous de choisir. Prenez votre temps pour réfléchir.",
+        switchHint: "Vous pouvez changer à tout moment dans les paramètres.",
+        screen6Title: "Une question rapide...",
+        screen6Subtitle: "Si quelqu'un commençait à vous parler en {lang} maintenant, comment vous sentiriez-vous ?",
+        conf1Title: "Je me figerais", conf1Desc: "Je connais quelques mots mais je ne peux pas vraiment converser",
+        conf2Title: "Je me débrouillerais", conf2Desc: "Les conversations de base fonctionnent, mais je fais beaucoup d'erreurs",
+        conf3Title: "Ça irait", conf3Desc: "Je peux parler, mais les sujets complexes sont difficiles",
+        conf4Title: "Je serais à l'aise", conf4Desc: "Je suis assez confiant(e), je veux juste paraître plus naturel(le)",
+        confHint: "Ce n'est pas un test — ça nous aide juste à commencer au bon rythme pour vous.",
+        screen7Title: "Vous êtes prêt(e) !",
+        screen7Subtitle: "Je m'adapterai à votre rythme et me souviendrai<br>de ce que nous pratiquons ensemble.",
+        labelHome: "Langue maternelle :", labelLearning: "J'apprends :", labelGoals: "Objectifs :", labelMode: "Mode :",
+        letsTalk: "Commençons →", skipForNow: "Passer pour l'instant",
+        topic: "Sujet", listening: "Écoute...", speaking: "Parle...", thinking: "Réfléchit...",
+        summaryTitle: "Résumé de la conversation", performance: "Vos performances",
+        fluency: "Fluidité", vocabulary: "Vocabulaire", grammar: "Grammaire",
+        whatWentWell: "Ce qui s'est bien passé", focusAreas: "Points à travailler", newExpressions: "Nouvelles expressions apprises",
+        home: "Accueil", practiceAgain: "Pratiquer encore"
+      },
+      de: {
+        screen3Title: "Welche Sprachen möchtest du<br>üben?",
+        screen3Subtitle: "Wähle so viele du willst. Du kannst später immer mehr hinzufügen.",
+        continueWith: "Weiter mit",
+        language: "Sprache",
+        languages: "Sprachen",
+        continue: "Weiter →",
+        screen4Title: "Was führt dich hierher?",
+        screen4Subtitle: "Das hilft uns, deine Gespräche zu personalisieren.",
+        goalWork: "Arbeit", goalWorkDesc: "Meetings, E-Mails, Kunden",
+        goalTravel: "Reisen", goalTravelDesc: "Sich an neuen Orten zurechtfinden",
+        goalSocial: "Soziales", goalSocialDesc: "Freunde finden, sich verbinden",
+        goalInterviews: "Vorstellungsgespräche", goalInterviewsDesc: "Sich auf Interviews vorbereiten",
+        goalStudy: "Studium", goalStudyDesc: "Akademische Bedürfnisse",
+        goalMoving: "Umzug", goalMovingDesc: "In ein neues Land ziehen",
+        screen5Title: "Wie übst du am<br>liebsten?",
+        voiceTitle: "Sprachgespräche",
+        voiceDesc: "Sprich natürlich, wie ein Telefonat mit einem Freund. Ideal für Flüssigkeit.",
+        textTitle: "Text + Sprache",
+        textDesc: "Tippe oder sprich — deine Wahl. Nimm dir Zeit zum Nachdenken.",
+        switchHint: "Du kannst jederzeit in den Einstellungen wechseln.",
+        screen6Title: "Eine kurze Frage...",
+        screen6Subtitle: "Wenn jemand jetzt anfangen würde, mit dir auf {lang} zu sprechen, wie würdest du dich fühlen?",
+        conf1Title: "Ich würde erstarren", conf1Desc: "Ich kenne ein paar Wörter, kann aber nicht wirklich reden",
+        conf2Title: "Ich würde es irgendwie schaffen", conf2Desc: "Einfache Gespräche funktionieren, aber ich mache viele Fehler",
+        conf3Title: "Es würde gehen", conf3Desc: "Ich kann reden, aber komplexe Themen sind schwierig",
+        conf4Title: "Ich würde mich wohl fühlen", conf4Desc: "Ich bin ziemlich selbstbewusst, möchte nur natürlicher klingen",
+        confHint: "Das ist kein Test — es hilft uns nur, im richtigen Tempo für dich zu starten.",
+        screen7Title: "Alles bereit!",
+        screen7Subtitle: "Ich werde mich an dein Tempo anpassen und mich erinnern,<br>was wir zusammen üben.",
+        labelHome: "Muttersprache:", labelLearning: "Ich lerne:", labelGoals: "Ziele:", labelMode: "Modus:",
+        letsTalk: "Los geht's →", skipForNow: "Erstmal überspringen",
+        topic: "Thema", listening: "Hört zu...", speaking: "Spricht...", thinking: "Denkt nach...",
+        summaryTitle: "Gesprächszusammenfassung", performance: "Deine Leistung",
+        fluency: "Flüssigkeit", vocabulary: "Wortschatz", grammar: "Grammatik",
+        whatWentWell: "Was gut lief", focusAreas: "Übungsbereiche", newExpressions: "Neue Ausdrücke gelernt",
+        home: "Startseite", practiceAgain: "Nochmal üben"
+      },
+      pt: {
+        screen3Title: "Quais idiomas você gostaria<br>de praticar?",
+        screen3Subtitle: "Escolha quantos quiser. Você sempre pode adicionar mais depois.",
+        continueWith: "Continuar com",
+        language: "idioma",
+        languages: "idiomas",
+        continue: "Continuar →",
+        screen4Title: "O que te traz aqui?",
+        screen4Subtitle: "Isso nos ajuda a personalizar suas conversas.",
+        goalWork: "Trabalho", goalWorkDesc: "Reuniões, emails, clientes",
+        goalTravel: "Viagens", goalTravelDesc: "Se locomover em novos lugares",
+        goalSocial: "Social", goalSocialDesc: "Fazer amigos, conectar",
+        goalInterviews: "Entrevistas", goalInterviewsDesc: "Se preparar para entrevistas",
+        goalStudy: "Estudos", goalStudyDesc: "Necessidades acadêmicas",
+        goalMoving: "Mudança", goalMovingDesc: "Se mudar para um novo país",
+        screen5Title: "Como você prefere<br>praticar?",
+        voiceTitle: "Conversas por voz",
+        voiceDesc: "Fale naturalmente, como uma ligação com um amigo. Ideal para fluência.",
+        textTitle: "Texto + Voz",
+        textDesc: "Digite ou fale — você escolhe. Tire seu tempo para pensar.",
+        switchHint: "Você pode mudar a qualquer momento nas configurações.",
+        screen6Title: "Uma pergunta rápida...",
+        screen6Subtitle: "Se alguém começasse a falar com você em {lang} agora, como você se sentiria?",
+        conf1Title: "Eu travaria", conf1Desc: "Sei algumas palavras mas não consigo conversar",
+        conf2Title: "Eu me viraria", conf2Desc: "Conversas básicas funcionam, mas cometo muitos erros",
+        conf3Title: "Ficaria bem", conf3Desc: "Consigo conversar, mas temas complexos são difíceis",
+        conf4Title: "Me sentiria confortável", conf4Desc: "Tenho confiança, só quero soar mais natural",
+        confHint: "Não é um teste — só nos ajuda a começar no ritmo certo para você.",
+        screen7Title: "Tudo pronto!",
+        screen7Subtitle: "Vou me adaptar ao seu ritmo e lembrar<br>do que praticarmos juntos.",
+        labelHome: "Idioma nativo:", labelLearning: "Aprendendo:", labelGoals: "Objetivos:", labelMode: "Modo:",
+        letsTalk: "Vamos lá →", skipForNow: "Pular por agora",
+        topic: "Tema", listening: "Ouvindo...", speaking: "Falando...", thinking: "Pensando...",
+        summaryTitle: "Resumo da conversa", performance: "Seu desempenho",
+        fluency: "Fluência", vocabulary: "Vocabulário", grammar: "Gramática",
+        whatWentWell: "O que foi bem", focusAreas: "Áreas de foco", newExpressions: "Novas expressões aprendidas",
+        home: "Início", practiceAgain: "Praticar novamente"
+      }
+    };
+
+    const langCodeMap = {
+      'Italiano': 'it',
+      'English': 'en',
+      'Español': 'es',
+      'Français': 'fr',
+      'Deutsch': 'de',
+      'Português': 'pt',
+      'Portuguese': 'pt',
+      '日本語': 'en',
+      '中文': 'en',
+      '한국어': 'en'
+    };
+
+    // Languages with variants
+    const languageVariants = {
+      'Portuguese': {
+        flag: '🇵🇹',
+        variants: [
+          { flag: '🇧🇷', name: 'Brazilian Portuguese', nameIt: 'Portoghese Brasiliano', desc: 'Most widely spoken, vibrant and musical', descIt: 'Il più diffuso, vivace e musicale' },
+          { flag: '🇵🇹', name: 'European Portuguese', nameIt: 'Portoghese Europeo', desc: 'Classic pronunciation from Portugal', descIt: 'Pronuncia classica del Portogallo' }
+        ]
+      },
+      'English': {
+        flag: '🇬🇧',
+        variants: [
+          { flag: '🇺🇸', name: 'American English', nameIt: 'Inglese Americano', desc: 'Most widely used worldwide', descIt: 'Il più diffuso al mondo' },
+          { flag: '🇬🇧', name: 'British English', nameIt: 'Inglese Britannico', desc: 'Classic RP pronunciation', descIt: 'Pronuncia classica britannica' },
+          { flag: '🇦🇺', name: 'Australian English', nameIt: 'Inglese Australiano', desc: 'Unique expressions and relaxed style', descIt: 'Espressioni uniche e stile rilassato' }
+        ]
+      },
+      'Spanish': {
+        flag: '🇪🇸',
+        variants: [
+          { flag: '🇪🇸', name: 'Spanish (Spain)', nameIt: 'Spagnolo (Spagna)', desc: 'European Spanish with distinción', descIt: 'Spagnolo europeo con distinción' },
+          { flag: '🌎', name: 'Latin American Spanish', nameIt: 'Spagnolo Latinoamericano', desc: 'Widely understood across the Americas', descIt: 'Compreso in tutta l\'America Latina' }
+        ]
+      },
+      'Chinese': {
+        flag: '🇨🇳',
+        variants: [
+          { flag: '🇨🇳', name: 'Mandarin (Simplified)', nameIt: 'Mandarino (Semplificato)', desc: 'Standard Chinese, mainland', descIt: 'Cinese standard, continentale' },
+          { flag: '🇹🇼', name: 'Mandarin (Traditional)', nameIt: 'Mandarino (Tradizionale)', desc: 'Traditional characters, Taiwan', descIt: 'Caratteri tradizionali, Taiwan' }
+        ]
+      }
+    };
+
+    let variantQueue = [];
+    let currentVariantIndex = 0;
+    let selectedVariants = {};
+
+    function t(key) {
+      return translations[currentLang]?.[key] || translations['en'][key] || key;
+    }
+
+    function applyTranslations() {
+      // Screen 3
+      document.querySelector('#screen-3 .screen-title').innerHTML = t('screen3Title');
+      document.querySelector('#screen-3 .screen-subtitle').textContent = t('screen3Subtitle');
+
+      // Screen 4
+      document.querySelector('#screen-4 .screen-title').textContent = t('screen4Title');
+      document.querySelector('#screen-4 .screen-subtitle').textContent = t('screen4Subtitle');
+      const goals = document.querySelectorAll('#screen-4 .goal-card');
+      const goalKeys = ['Work', 'Travel', 'Social', 'Interviews', 'Study', 'Moving'];
+      goals.forEach((card, i) => {
+        card.querySelector('.title').textContent = t('goal' + goalKeys[i]);
+        card.querySelector('.desc').textContent = t('goal' + goalKeys[i] + 'Desc');
+      });
+
+      // Screen 5
+      document.querySelector('#screen-5 .screen-title').innerHTML = t('screen5Title');
+      const options5 = document.querySelectorAll('#screen-5 .option-card');
+      options5[0].querySelector('.title').textContent = t('voiceTitle');
+      options5[0].querySelector('.desc').textContent = t('voiceDesc');
+      options5[1].querySelector('.title').textContent = t('textTitle');
+      options5[1].querySelector('.desc').textContent = t('textDesc');
+      document.querySelector('#screen-5 .hint-text').textContent = t('switchHint');
+
+      // Screen 6
+      document.querySelector('#screen-6 .screen-title').textContent = t('screen6Title');
+      document.querySelector('#screen-6 .hint-text').textContent = t('confHint');
+      const options6 = document.querySelectorAll('#screen-6 .option-card');
+      const confKeys = ['conf1', 'conf2', 'conf3', 'conf4'];
+      options6.forEach((card, i) => {
+        card.querySelector('.title').textContent = t(confKeys[i] + 'Title');
+        card.querySelector('.desc').textContent = t(confKeys[i] + 'Desc');
+      });
+
+      // Screen 7
+      document.querySelector('#screen-7 .ready-title').textContent = t('screen7Title');
+      document.querySelector('#screen-7 .ready-subtitle').innerHTML = t('screen7Subtitle');
+      document.querySelectorAll('#screen-7 .summary-item .label')[0].textContent = t('labelHome');
+      document.querySelectorAll('#screen-7 .summary-item .label')[1].textContent = t('labelLearning');
+      document.querySelectorAll('#screen-7 .summary-item .label')[2].textContent = t('labelGoals');
+      document.querySelectorAll('#screen-7 .summary-item .label')[3].textContent = t('labelMode');
+      document.querySelector('#screen-7 .btn-primary').textContent = t('letsTalk');
+      document.querySelector('#screen-7 .skip-link').textContent = t('skipForNow');
+
+      // Call screen
+      document.querySelector('.call-topic').textContent = t('topic');
+
+      // Summary screen
+      document.querySelector('.summary-header h1').textContent = t('summaryTitle');
+      document.querySelector('.score-section .section-title').textContent = t('performance');
+      const scoreLabels = document.querySelectorAll('.score-label');
+      scoreLabels[0].textContent = t('fluency');
+      scoreLabels[1].textContent = t('vocabulary');
+      scoreLabels[2].textContent = t('grammar');
+      const feedbackCards = document.querySelectorAll('.feedback-card h3');
+      feedbackCards[0].innerHTML = '💡 ' + t('whatWentWell');
+      feedbackCards[1].innerHTML = '🌱 ' + t('focusAreas');
+      feedbackCards[2].innerHTML = '📝 ' + t('newExpressions');
+      document.querySelector('.action-buttons .btn-secondary').textContent = t('home');
+      document.querySelector('.action-buttons .btn-primary').textContent = t('practiceAgain');
+
+      // Update buttons
+      updateContinueButtons();
+    }
+
+    function updateContinueButtons() {
+      document.getElementById('btn-native').textContent = t('continue');
+      document.getElementById('btn-goals').textContent = t('continue');
+      document.getElementById('btn-mode').textContent = t('continue');
+      document.getElementById('btn-confidence').textContent = t('continue');
+
+      // Update learn button with count
+      const selected = userSelections.learningLanguages.length;
+      const btn = document.getElementById('btn-learn');
+      if (selected > 0) {
+        btn.textContent = `${t('continueWith')} ${selected} ${selected > 1 ? t('languages') : t('language')} →`;
+      } else {
+        btn.textContent = t('continue');
+      }
+    }
+
+    function goToScreen(num) {
+      // Handle current screen removal
+      const currentEl = document.getElementById(`screen-${currentScreen}`);
+      if (currentEl) currentEl.classList.remove('active');
+
+      // Handle new screen activation
+      const newEl = document.getElementById(`screen-${num}`);
+      if (newEl) newEl.classList.add('active');
+
+      // Update nav dots (only for numbered screens)
+      if (typeof num === 'number') {
+        document.querySelectorAll('.nav-dot').forEach((dot, i) => {
+          dot.classList.toggle('active', i === num - 1);
+        });
+      }
+
+      // Voice screen translations
+      if (num === 'voice') {
+        document.getElementById('voice-title').innerHTML = t('voiceTitle');
+        document.getElementById('voice-subtitle').textContent = t('voiceSubtitle');
+        document.getElementById('voice-female-name').textContent = t('voiceFemaleName');
+        document.getElementById('voice-female-desc').textContent = t('voiceFemaleDesc');
+        document.getElementById('voice-male-name').textContent = t('voiceMaleName');
+        document.getElementById('voice-male-desc').textContent = t('voiceMaleDesc');
+        document.getElementById('voice-hint').textContent = t('voiceHint');
+        document.getElementById('btn-voice').textContent = t('continue');
+      }
+
+      // Update dynamic content based on screen
+      if (num === 6 && userSelections.learningLanguages.length > 0) {
+        const lang = userSelections.learningLanguages[0];
+        const subtitle = t('screen6Subtitle').replace('{lang}', lang);
+        document.getElementById('confidence-question').innerHTML = subtitle;
+      }
+
+      if (num === 7) {
+        if (userSelections.nativeLanguage) {
+          document.getElementById('summary-home').textContent = userSelections.nativeLanguage;
+        }
+        if (userSelections.learningLanguages.length > 0) {
+          document.getElementById('summary-learning').textContent = userSelections.learningLanguages.join(', ');
+        }
+        if (userSelections.goals.length > 0) {
+          document.getElementById('summary-goals').textContent = userSelections.goals.join(', ');
+        }
+        if (userSelections.mode) {
+          document.getElementById('summary-mode').textContent = userSelections.mode;
+        }
+        if (userSelections.voiceName) {
+          document.getElementById('summary-voice').textContent = userSelections.voiceName;
+        }
+        document.getElementById('label-voice').textContent = t('labelVoice');
+      }
+
+      currentScreen = num;
+    }
+
+    function selectLanguage(el) {
+      document.querySelectorAll('#screen-2 .language-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+      el.classList.add('selected');
+      userSelections.nativeLanguage = el.querySelector('.name').textContent;
+      userSelections.nativeCode = langCodeMap[userSelections.nativeLanguage] || 'en';
+      currentLang = userSelections.nativeCode;
+      document.getElementById('btn-native').disabled = false;
+
+      // Apply translations immediately
+      applyTranslations();
+    }
+
+    function toggleChip(el) {
+      el.classList.toggle('selected');
+
+      userSelections.learningLanguages = [];
+      document.querySelectorAll('#screen-3 .language-chip.selected').forEach(chip => {
+        userSelections.learningLanguages.push(chip.querySelector('.name').textContent);
+      });
+
+      const selected = userSelections.learningLanguages.length;
+      const btn = document.getElementById('btn-learn');
+      btn.disabled = selected === 0;
+      if (selected > 0) {
+        btn.textContent = `${t('continueWith')} ${selected} ${selected > 1 ? t('languages') : t('language')} →`;
+      } else {
+        btn.textContent = t('continue');
+      }
+    }
+
+    // Variant selection functions
+    function goToVariants() {
+      // Check which selected languages have variants
+      variantQueue = userSelections.learningLanguages.filter(lang => languageVariants[lang]);
+      currentVariantIndex = 0;
+      selectedVariants = {};
+
+      if (variantQueue.length > 0) {
+        showVariantScreen(variantQueue[0]);
+      } else {
+        goToScreen(4);
+      }
+    }
+
+    function showVariantScreen(langName) {
+      const langData = languageVariants[langName];
+      const isItalian = currentLang === 'it';
+
+      document.getElementById('variant-flag').textContent = langData.flag;
+      document.getElementById('variant-title').textContent = langName;
+      document.getElementById('variant-subtitle').textContent = isItalian
+        ? 'Quale variante vorresti praticare?'
+        : 'Which variant would you like to practice?';
+
+      const optionsContainer = document.getElementById('variant-options');
+      optionsContainer.innerHTML = '';
+
+      langData.variants.forEach((variant, index) => {
+        const card = document.createElement('div');
+        card.className = 'option-card';
+        card.onclick = () => selectVariant(card, langName, variant.name);
+        card.innerHTML = `
+          <div class="header">
+            <span class="emoji">${variant.flag}</span>
+            <span class="title">${isItalian ? variant.nameIt : variant.name}</span>
+          </div>
+          <div class="desc">${isItalian ? variant.descIt : variant.desc}</div>
+        `;
+        optionsContainer.appendChild(card);
+      });
+
+      document.getElementById('btn-variant').disabled = true;
+      document.getElementById('btn-variant').textContent = isItalian ? 'Continua →' : 'Continue →';
+
+      // Show variant screen
+      document.getElementById(`screen-${currentScreen}`).classList.remove('active');
+      document.getElementById('screen-variants').classList.add('active');
+      currentScreen = 'variants';
+    }
+
+    function selectVariant(el, langName, variantName) {
+      document.querySelectorAll('#screen-variants .option-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      el.classList.add('selected');
+      selectedVariants[langName] = variantName;
+      document.getElementById('btn-variant').disabled = false;
+    }
+
+    function selectVariantAndContinue() {
+      currentVariantIndex++;
+
+      // Update learning languages with variant info
+      const langName = variantQueue[currentVariantIndex - 1];
+      const variantName = selectedVariants[langName];
+      const idx = userSelections.learningLanguages.indexOf(langName);
+      if (idx !== -1) {
+        userSelections.learningLanguages[idx] = variantName;
+      }
+
+      if (currentVariantIndex < variantQueue.length) {
+        showVariantScreen(variantQueue[currentVariantIndex]);
+      } else {
+        document.getElementById('screen-variants').classList.remove('active');
+        document.getElementById('screen-4').classList.add('active');
+        currentScreen = 4;
+      }
+    }
+
+    function goBackFromVariants() {
+      if (currentVariantIndex > 0) {
+        currentVariantIndex--;
+        showVariantScreen(variantQueue[currentVariantIndex]);
+      } else {
+        document.getElementById('screen-variants').classList.remove('active');
+        document.getElementById('screen-3').classList.add('active');
+        currentScreen = 3;
+      }
+    }
+
+    function toggleGoal(el) {
+      el.classList.toggle('selected');
+
+      userSelections.goals = [];
+      document.querySelectorAll('#screen-4 .goal-card.selected').forEach(card => {
+        userSelections.goals.push(card.querySelector('.title').textContent);
+      });
+
+      document.getElementById('btn-goals').disabled = userSelections.goals.length === 0;
+    }
+
+    function selectOption(el, screen) {
+      const parent = document.getElementById(`screen-${screen}`);
+      parent.querySelectorAll('.option-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      el.classList.add('selected');
+
+      if (screen === 5) {
+        userSelections.mode = el.querySelector('.title').textContent;
+        document.getElementById('btn-mode').disabled = false;
+      } else if (screen === 6) {
+        document.getElementById('btn-confidence').disabled = false;
+      }
+    }
+
+    function selectVoice(el, voiceType) {
+      document.querySelectorAll('.voice-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      el.classList.add('selected');
+      userSelections.voice = voiceType;
+      userSelections.voiceName = el.querySelector('.voice-name').textContent;
+      document.getElementById('btn-voice').disabled = false;
+    }
+
+    function playVoicePreview(voiceType) {
+      // In real app, this would play a sample audio
+      const phrases = {
+        female: currentLang === 'it' ? "Ciao! Sono Sofia, sarò la tua coach." : "Hi! I'm Sofia, I'll be your coach.",
+        male: currentLang === 'it' ? "Ciao! Sono Marco, sarò il tuo coach." : "Hi! I'm Marco, I'll be your coach."
+      };
+      alert(phrases[voiceType] + "\n\n(Audio preview would play here)");
+    }
+
+    function setCallState(state) {
+      const miniWaveform = document.getElementById('mini-waveform');
+      const statusText = document.getElementById('voice-status-text');
+      const transcript = document.getElementById('chat-transcript');
+      const currentAiMessage = document.getElementById('current-ai-message');
+
+      // Reset states
+      miniWaveform.classList.remove('active');
+      statusText.classList.remove('active');
+
+      // Update state toggle buttons
+      document.querySelectorAll('.state-btn').forEach(btn => btn.classList.remove('active'));
+      if (event && event.target) {
+        event.target.classList.add('active');
+      }
+
+      // Remove any existing typing indicator
+      const existingTyping = document.querySelector('.chat-message.typing');
+      if (existingTyping) existingTyping.remove();
+
+      switch(state) {
+        case 'ai-speaking':
+          statusText.textContent = currentLang === 'it' ? 'LinguaAI sta parlando...' : 'AI is speaking...';
+          if (currentAiMessage) currentAiMessage.style.opacity = '1';
+          break;
+        case 'thinking':
+          statusText.textContent = currentLang === 'it' ? 'Sta pensando...' : 'Thinking...';
+          // Add typing indicator
+          const typingDiv = document.createElement('div');
+          typingDiv.className = 'chat-message ai typing';
+          typingDiv.innerHTML = `
+            <div class="sender">LinguaAI</div>
+            <div class="bubble">
+              <div class="typing-indicator">
+                <span></span><span></span><span></span>
+              </div>
+            </div>
+          `;
+          transcript.appendChild(typingDiv);
+          transcript.scrollTop = transcript.scrollHeight;
+          break;
+        case 'user-speaking':
+          miniWaveform.classList.add('active');
+          statusText.classList.add('active');
+          statusText.textContent = currentLang === 'it' ? 'In ascolto...' : 'Listening...';
+          break;
+      }
+    }
+  </script>
+</body>
+</html>

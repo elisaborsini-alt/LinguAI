@@ -1,0 +1,689 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// User & Authentication
+// ============================================
+
+model User {
+  id                   String    @id @default(uuid())
+  email                String    @unique
+  passwordHash         String
+  name                 String?
+  avatarUrl            String?
+
+  // Language settings
+  nativeLanguage       String    @default("en")
+  targetLanguageCode   String    @default("en")
+  targetLanguageVariant String   @default("US")
+
+  // Learning settings
+  currentGoal          String    @default("conversation")
+  onboardingCompleted  Boolean   @default(false)
+
+  // Preferences
+  correctionIntensity  String    @default("moderate") // minimal, moderate, detailed
+  speakingSpeed        String    @default("normal")   // slow, normal, fast
+  voiceGender          String    @default("female")   // male, female
+  voiceArchetype       String    @default("neutral_mirror") // neutral_mirror, gentle_friend, curious_companion, calm_mentor
+  voiceIdentity        String    @default("warm_female")   // warm_female, warm_male, energetic_friend, calm_mentor_voice
+  sessionLengthMinutes Int       @default(15)
+  notificationsEnabled Boolean   @default(true)
+  hapticFeedback       Boolean   @default(true)
+
+  // Timestamps
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  lastActiveAt         DateTime  @default(now())
+
+  // Relations
+  levelEstimates       LevelEstimate?
+  memory               UserMemory?
+  conversations        Conversation[]
+  progressStats        ProgressStats?
+  refreshTokens        RefreshToken[]
+
+  // Pronunciation
+  pronunciationAttempts PronunciationAttempt[]
+  customPhrases         PronunciationPhrase[]
+
+  // Conversation threads
+  conversationThreads   ConversationThread[]
+
+  // Placement test
+  placementResult       PlacementResult?
+
+  // Voice snapshots (Time Machine)
+  voiceSnapshots        VoiceSnapshot[]
+
+  @@index([email])
+}
+
+model RefreshToken {
+  id          String   @id @default(uuid())
+  token       String   @unique
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+}
+
+// ============================================
+// Level Tracking
+// ============================================
+
+model LevelEstimate {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  grammarLevel    String   @default("A1")
+  vocabularyLevel String   @default("A1")
+  fluencyLevel    String   @default("A1")
+  overallLevel    String   @default("A1")
+
+  // Confidence in estimates (0-1)
+  confidence      Float    @default(0.1)
+
+  // Detailed scores for progression
+  grammarScore    Float    @default(0)
+  vocabularyScore Float    @default(0)
+  fluencyScore    Float    @default(0)
+
+  updatedAt       DateTime @updatedAt
+
+  // Level history
+  history         LevelHistory[]
+}
+
+model LevelHistory {
+  id              String        @id @default(uuid())
+  levelEstimateId String
+  levelEstimate   LevelEstimate @relation(fields: [levelEstimateId], references: [id], onDelete: Cascade)
+
+  grammarLevel    String
+  vocabularyLevel String
+  fluencyLevel    String
+  overallLevel    String
+
+  recordedAt      DateTime      @default(now())
+
+  @@index([levelEstimateId])
+}
+
+// ============================================
+// Memory System
+// ============================================
+
+model UserMemory {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Inferred preferences
+  preferredTopics     String[]  @default([])
+  avoidTopics         String[]  @default([])
+  responseStyle       String    @default("mixed") // formal, casual, mixed
+  pacePreference      String    @default("moderate") // slow, moderate, fast
+
+  // Aggregated session data
+  recentTopics        String[]  @default([])
+  totalSessions       Int       @default(0)
+
+  // Growth moment cooldown
+  lastGrowthMomentAt  DateTime?
+
+  updatedAt           DateTime  @updatedAt
+
+  // Relations
+  facts               MemoryFact[]
+  errorPatterns       ErrorPattern[]
+  sessionSummaries    SessionSummary[]
+  vocabulary          LearnedVocabulary[]
+}
+
+model MemoryFact {
+  id              String     @id @default(uuid())
+  memoryId        String
+  memory          UserMemory @relation(fields: [memoryId], references: [id], onDelete: Cascade)
+
+  category        String     // personal, work, preference, goal, context, hobby
+  content         String
+  confidence      Float      @default(0.5)
+
+  createdAt       DateTime   @default(now())
+  lastReferencedAt DateTime  @default(now())
+
+  @@index([memoryId])
+  @@index([category])
+}
+
+model ErrorPattern {
+  id              String     @id @default(uuid())
+  memoryId        String
+  memory          UserMemory @relation(fields: [memoryId], references: [id], onDelete: Cascade)
+
+  category        String     // grammar, vocabulary, pronunciation, usage
+  pattern         String     // Description of the error pattern
+  examples        String[]   @default([])
+  frequency       Int        @default(1)
+  corrected       Boolean    @default(false)
+
+  lastOccurredAt  DateTime   @default(now())
+  createdAt       DateTime   @default(now())
+
+  @@index([memoryId])
+  @@index([category])
+}
+
+model SessionSummary {
+  id                   String     @id @default(uuid())
+  memoryId             String
+  memory               UserMemory @relation(fields: [memoryId], references: [id], onDelete: Cascade)
+
+  conversationId       String
+  date                 DateTime   @default(now())
+  durationMinutes      Int       @default(0)
+  goal                 String    @default("conversation")
+
+  topicsDiscussed      String[]   @default([])
+  keyMistakes          String[]   @default([])
+  improvements         String[]   @default([])
+  vocabularyIntroduced String[]   @default([])
+
+  // Performance metrics
+  fluencyScore         Float?
+  accuracyScore        Float?
+
+  // AI-generated summary
+  summary              String?
+
+  @@index([memoryId])
+  @@index([date])
+}
+
+model ConversationThread {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  topic           String          // "Job interview at Google"
+  context         String          // "User preparing for interview, nervous about technical part"
+  status          String          @default("open") // open | resolved | expired
+  emotion         String?         // emotional context when topic was active
+
+  lastMentionedAt DateTime        @default(now())
+  mentions        Int             @default(1)
+  createdAt       DateTime        @default(now())
+
+  @@index([userId, status])
+  @@index([lastMentionedAt])
+}
+
+model LearnedVocabulary {
+  id          String     @id @default(uuid())
+  memoryId    String
+  memory      UserMemory @relation(fields: [memoryId], references: [id], onDelete: Cascade)
+
+  word        String
+  translation String?
+  context     String?    // Sentence where it was learned
+
+  timesUsed   Int        @default(0)
+  mastery     Float      @default(0) // 0-1
+
+  learnedAt   DateTime   @default(now())
+  lastUsedAt  DateTime   @default(now())
+
+  @@index([memoryId])
+  @@index([word])
+  @@unique([memoryId, word])
+}
+
+// ============================================
+// Conversations
+// ============================================
+
+model Conversation {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  mode            String    // chat, call
+  goal            String
+  languageCode    String
+  languageVariant String
+
+  // Scenario context (if any)
+  scenarioId      String?
+  scenarioType    String?
+  scenarioDesc    String?
+  aiRole          String?
+  userRole        String?
+
+  // Status
+  status          String    @default("active") // active, ended, abandoned
+
+  // Timestamps
+  startedAt       DateTime  @default(now())
+  endedAt         DateTime?
+
+  // Relations
+  messages        Message[]
+  metrics         ConversationMetrics?
+  report          SessionReport?
+  emotionLogs     EmotionLog[]
+  emotionSummary  EmotionSessionSummary?
+  voiceSnapshots  VoiceSnapshot[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+model Message {
+  id              String       @id @default(uuid())
+  conversationId  String
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  role            String       // user, assistant, system
+  content         String
+  audioUrl        String?
+
+  // Analysis (for user messages)
+  analysis        Json?        // MessageAnalysis object
+
+  // Corrections provided (for assistant messages)
+  corrections     Json?        // DetectedError[] array
+
+  // Emotion detected during this message
+  emotionDetected String?      // Primary emotion
+  emotionConfidence Float?     // Confidence level
+
+  // Timing
+  responseTimeMs  Int?
+
+  createdAt       DateTime     @default(now())
+
+  @@index([conversationId])
+  @@index([role])
+}
+
+model ConversationMetrics {
+  id                    String       @id @default(uuid())
+  conversationId        String       @unique
+  conversation          Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  totalMessages         Int          @default(0)
+  userMessages          Int          @default(0)
+  userSpeakingTimeMs    Int          @default(0)
+  wordsSpoken           Int          @default(0)
+  uniqueWordsCount      Int          @default(0)
+  errorsDetected        Int          @default(0)
+  errorsCorrected       Int          @default(0)
+  avgResponseTimeMs     Int          @default(0)
+
+  // Scores
+  fluencyScore          Float?
+  accuracyScore         Float?
+  engagementScore       Float?
+}
+
+model SessionReport {
+  id              String       @id @default(uuid())
+  conversationId  String       @unique
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  // Summary
+  summary         String
+  duration        Int          // minutes
+
+  // Performance
+  overallScore    Float
+  fluencyScore    Float
+  accuracyScore   Float
+  vocabularyScore Float
+
+  // Detailed feedback
+  strengths       String[]     @default([])
+  areasToImprove  String[]     @default([])
+
+  // Mistakes made
+  mistakes        Json         // Array of mistake objects
+
+  // New vocabulary
+  newVocabulary   Json         // Array of word objects with context
+
+  // Suggestions
+  suggestions     String[]     @default([])
+  nextSteps       String[]     @default([])
+
+  // Recommended scenarios
+  recommendedScenarios String[] @default([])
+
+  // Emotional analysis
+  dominantEmotion      String?
+  emotionalJourney     String?
+  engagementLevel      String?
+
+  createdAt       DateTime     @default(now())
+}
+
+// ============================================
+// Progress Tracking
+// ============================================
+
+model ProgressStats {
+  id                     String   @id @default(uuid())
+  userId                 String   @unique
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  totalSpeakingTimeMin   Int      @default(0)
+  totalSessions          Int      @default(0)
+  totalWords             Int      @default(0)
+  totalUniqueWords       Int      @default(0)
+  totalErrors            Int      @default(0)
+  totalCorrections       Int      @default(0)
+
+  currentStreak          Int      @default(0)
+  longestStreak          Int      @default(0)
+  lastActivityDate       DateTime?
+
+  updatedAt              DateTime @updatedAt
+
+  // Daily stats
+  dailyStats             DailyStats[]
+}
+
+model DailyStats {
+  id                String        @id @default(uuid())
+  progressStatsId   String
+  progressStats     ProgressStats @relation(fields: [progressStatsId], references: [id], onDelete: Cascade)
+
+  date              DateTime      @db.Date
+  speakingTimeMin   Int           @default(0)
+  messagesCount     Int           @default(0)
+  wordsSpoken       Int           @default(0)
+  errorsCount       Int           @default(0)
+  sessionsCount     Int           @default(0)
+
+  @@unique([progressStatsId, date])
+  @@index([progressStatsId])
+  @@index([date])
+}
+
+// ============================================
+// Emotion Tracking
+// ============================================
+
+model EmotionLog {
+  id              String       @id @default(uuid())
+  conversationId  String
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  messageId       String?      // Associated message if any
+
+  // Primary emotion detected
+  primaryEmotion  String       // confident, enthusiastic, frustrated, anxious, bored, confused, tired, neutral
+  confidence      Float        @default(0.5)
+  secondaryEmotion String?
+
+  // Audio signals (if available)
+  audioSignals    Json?        // EmotionSignals object
+
+  // Recommendations generated
+  paceAdjustment       String?  // slower, faster, maintain
+  difficultyAdjustment String?  // easier, harder, maintain
+  toneAdjustment       String?  // encouraging, challenging, calming, neutral
+
+  timestamp       DateTime     @default(now())
+
+  @@index([conversationId])
+  @@index([primaryEmotion])
+  @@index([timestamp])
+}
+
+model EmotionSessionSummary {
+  id              String       @id @default(uuid())
+  conversationId  String       @unique
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  // Overall session emotional data
+  dominantEmotion String
+  emotionTrend    String       // improving, declining, stable
+  engagementLevel String       // high, medium, low
+
+  // Emotion distribution
+  emotionDistribution Json     // { emotion: percentage }
+
+  // Journey narrative
+  emotionalJourney    String?  // "Started confident → frustrated mid-session → ended neutral"
+
+  // AI-generated recommendations
+  recommendations     String[] @default([])
+
+  createdAt       DateTime     @default(now())
+}
+
+// ============================================
+// Scenarios
+// ============================================
+
+model Scenario {
+  id              String   @id @default(uuid())
+
+  goal            String   // Which goal this scenario belongs to
+  difficulty      String   // CEFR level
+
+  name            String
+  description     String
+
+  aiRole          String
+  userRole        String
+  context         String   // Setting/background
+
+  // Prompt customization
+  systemPrompt    String?  // Additional system instructions
+  starterMessage  String?  // Optional AI starter message
+
+  // Vocabulary focus
+  keyVocabulary   String[] @default([])
+
+  // Languages this scenario is available in
+  languages       String[] @default(["en"])
+
+  isActive        Boolean  @default(true)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([goal])
+  @@index([difficulty])
+}
+
+// ============================================
+// Pronunciation Practice
+// ============================================
+
+model PhraseCategory {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  icon        String?
+  sortOrder   Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  phrases     PronunciationPhrase[]
+
+  @@index([sortOrder])
+}
+
+model PronunciationPhrase {
+  id              String   @id @default(uuid())
+  text            String
+  phoneticIPA     String?  // International Phonetic Alphabet transcription
+  languageCode    String
+  languageVariant String?
+
+  // Categorization
+  categoryId      String?
+  category        PhraseCategory? @relation(fields: [categoryId], references: [id])
+  difficulty      String   @default("intermediate") // beginner, intermediate, advanced
+
+  // Custom phrases by users
+  isCustom        Boolean  @default(false)
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  referenceAudios ReferenceAudio[]
+  attempts        PronunciationAttempt[]
+
+  @@index([languageCode, languageVariant])
+  @@index([categoryId])
+  @@index([userId])
+  @@index([difficulty])
+}
+
+model ReferenceAudio {
+  id              String   @id @default(uuid())
+  phraseId        String
+  phrase          PronunciationPhrase @relation(fields: [phraseId], references: [id], onDelete: Cascade)
+
+  speakerId       String?  // For multiple native speakers
+  speakerName     String?
+  speakerGender   String?  // male, female
+
+  audioUrl        String
+  durationMs      Int
+
+  // Pre-computed analysis data for comparison
+  waveformData    Json?    // Array of amplitude values
+  pitchContour    Json?    // Array of {timestamp, frequency, confidence}
+  timingSegments  Json?    // Array of {start, end, label, type}
+
+  createdAt       DateTime @default(now())
+
+  @@index([phraseId])
+  @@index([speakerId])
+}
+
+model PronunciationAttempt {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phraseId        String
+  phrase          PronunciationPhrase @relation(fields: [phraseId], references: [id], onDelete: Cascade)
+
+  // User's recording
+  audioUrl        String
+  durationMs      Int
+
+  // Scores (0-100)
+  overallScore    Float
+  rhythmScore     Float
+  pitchScore      Float
+  clarityScore    Float
+
+  // Detailed analysis result
+  analysisResult  Json     // Full PronunciationAnalysis object
+
+  // Generated feedback
+  feedback        Json     // PronunciationFeedback object
+
+  // Transcript from STT
+  transcript      String?
+
+  createdAt       DateTime @default(now())
+
+  @@index([userId, phraseId])
+  @@index([userId, createdAt])
+  @@index([phraseId])
+}
+
+// ============================================
+// Memory Embeddings (pgvector)
+// ============================================
+
+model MemoryEmbedding {
+  id          String   @id @default(uuid())
+  userId      String
+  content     String
+  type        String   // fact, pattern, vocabulary, session
+  category    String
+  sourceId    String?
+  confidence  Float    @default(0.5)
+  // embedding column added via raw SQL migration (vector(1536))
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([type])
+}
+
+// ============================================
+// Placement Test
+// ============================================
+
+model PlacementResult {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Estimated levels
+  grammarLevel    String   // CEFR
+  vocabularyLevel String
+  fluencyLevel    String
+  overallLevel    String
+
+  // Confidence in estimate (0.6-0.8 typical)
+  confidence      Float
+
+  // Session data
+  turns           Int              // how many turns it took
+  durationSeconds Int              // actual duration
+  transcript      Json             // [{role, content, analysis}]
+
+  // Language tested
+  languageCode    String
+  languageVariant String
+
+  createdAt       DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ============================================
+// Voice Snapshots (Time Machine Progress)
+// ============================================
+
+model VoiceSnapshot {
+  id              String       @id @default(uuid())
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversationId  String
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  audioUrl        String       // local path: /uploads/voice-snapshots/{userId}/{id}.wav
+  durationMs      Int          // actual captured duration in ms
+  transcript      String?      // Deepgram transcript of the snippet
+  languageCode    String       // target language at capture time
+  cefrLevel       String       // estimated CEFR level at capture time
+
+  capturedAt      DateTime     @default(now())
+
+  @@index([userId, capturedAt])
+  @@index([userId, languageCode])
+}

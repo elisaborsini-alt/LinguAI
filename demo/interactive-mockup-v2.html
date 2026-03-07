@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinguaAI - Material You Demo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #4285F4;
+            --on-primary: #fff;
+            --surface: #FAFAFA;
+            --surface-variant: #E8EAF0;
+            --on-surface: #1F1F1F;
+            --outline: #79747E;
+        }
+
+        body {
+            font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .phone-frame {
+            width: 390px;
+            height: 844px;
+            background: var(--surface);
+            border-radius: 50px;
+            box-shadow: 0 25px 80px -12px rgba(0,0,0,0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .dynamic-island {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 126px;
+            height: 36px;
+            background: #000;
+            border-radius: 20px;
+            z-index: 100;
+        }
+
+        .screen {
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            background: var(--surface);
+        }
+        .screen.active { display: flex; }
+
+        /* Material You Header */
+        .m3-header {
+            padding: 60px 20px 24px;
+            border-radius: 0 0 28px 28px;
+            position: relative;
+            overflow: hidden;
+        }
+        .m3-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: inherit;
+            filter: brightness(0.95);
+        }
+        .m3-header-content {
+            position: relative;
+            z-index: 1;
+        }
+        .m3-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .m3-title {
+            font-size: 28px;
+            font-weight: 500;
+            color: var(--on-primary);
+            margin-bottom: 4px;
+        }
+        .m3-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.85);
+        }
+
+        /* Quick Language Switch */
+        .quick-switch {
+            display: flex;
+            gap: 8px;
+        }
+        .quick-switch-item {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            background: rgba(255,255,255,0.25);
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-switch-item.active {
+            background: rgba(255,255,255,0.9);
+            border-color: #fff;
+            transform: scale(1.1);
+        }
+        .quick-switch-item:hover { transform: scale(1.05); }
+
+        /* Stats Card */
+        .stats-card {
+            display: flex;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+        }
+        .stat-item {
+            flex: 1;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+            margin-top: 2px;
+        }
+        .stat-divider {
+            width: 1px;
+            background: rgba(255,255,255,0.3);
+            margin: 0 12px;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+            margin-top: -12px;
+        }
+
+        /* Language Selector */
+        .lang-selector {
+            margin-bottom: 16px;
+        }
+        .lang-selector-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--outline);
+            margin-bottom: 10px;
+        }
+        .lang-chips {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+        .lang-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 24px;
+            border: 2px solid #E0E0E0;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .lang-chip:hover { border-color: var(--primary); }
+        .lang-chip.active {
+            border-color: var(--primary);
+            background: color-mix(in srgb, var(--primary) 15%, white);
+        }
+        .lang-chip .flag { font-size: 22px; }
+        .lang-chip .name { font-size: 14px; font-weight: 500; }
+        .lang-chip .variant { font-size: 11px; color: var(--outline); }
+
+        /* Search Bar - M3 Style */
+        .m3-search {
+            display: flex;
+            align-items: center;
+            background: var(--surface-variant);
+            border-radius: 28px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            gap: 12px;
+        }
+        .m3-search input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            outline: none;
+            font-family: inherit;
+        }
+        .m3-search .icon { font-size: 20px; opacity: 0.6; }
+
+        /* Category Chips */
+        .category-row {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            margin-bottom: 12px;
+            padding-bottom: 4px;
+        }
+        .cat-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 18px;
+            border: 1.5px solid #E0E0E0;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+        .cat-chip:hover { border-color: var(--primary); }
+        .cat-chip.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+        .cat-chip .emoji { font-size: 16px; }
+
+        /* Difficulty Pills */
+        .diff-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .diff-pill {
+            padding: 6px 14px;
+            border-radius: 16px;
+            border: 1.5px solid;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .diff-pill.beginner { border-color: #34A853; color: #34A853; }
+        .diff-pill.beginner.active { background: #34A853; color: #fff; }
+        .diff-pill.intermediate { border-color: #FBBC04; color: #FBBC04; }
+        .diff-pill.intermediate.active { background: #FBBC04; color: #fff; }
+        .diff-pill.advanced { border-color: #EA4335; color: #EA4335; }
+        .diff-pill.advanced.active { background: #EA4335; color: #fff; }
+
+        /* Phrase Cards - M3 Style */
+        .phrase-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .phrase-card:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        .phrase-content { flex: 1; }
+        .phrase-text {
+            font-size: 17px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: var(--on-surface);
+        }
+        .phrase-ipa {
+            font-size: 13px;
+            color: var(--outline);
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+        .phrase-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .phrase-badge {
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .phrase-badge.beginner { background: #E8F5E9; color: #2E7D32; }
+        .phrase-badge.intermediate { background: #FFF8E1; color: #F57F17; }
+        .phrase-badge.advanced { background: #FFEBEE; color: #C62828; }
+
+        /* Score Circle */
+        .score-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+            position: relative;
+        }
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        .score-circle span {
+            position: relative;
+            z-index: 1;
+        }
+        .score-circle.high { background: conic-gradient(#34A853 0% 85%, #E8F5E9 85% 100%); }
+        .score-circle.high span { color: #34A853; }
+        .score-circle.medium { background: conic-gradient(#FBBC04 0% 72%, #FFF8E1 72% 100%); }
+        .score-circle.medium span { color: #F57F17; }
+        .score-circle.low { background: conic-gradient(#EA4335 0% 55%, #FFEBEE 55% 100%); }
+        .score-circle.low span { color: #C62828; }
+
+        .new-badge {
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Session Screen */
+        .session-header {
+            display: flex;
+            align-items: center;
+            padding: 60px 20px 16px;
+            gap: 16px;
+        }
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: var(--surface-variant);
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .session-title {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .phrase-display {
+            margin: 0 20px 20px;
+            padding: 28px 24px;
+            border-radius: 24px;
+            text-align: center;
+            color: #fff;
+        }
+        .phrase-display h2 {
+            font-size: 26px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .phrase-display .ipa {
+            font-size: 15px;
+            opacity: 0.85;
+        }
+
+        .audio-section {
+            margin: 0 20px 20px;
+        }
+        .audio-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--outline);
+            margin-bottom: 10px;
+        }
+        .audio-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .waveform {
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            margin-bottom: 12px;
+        }
+        .waveform-bar {
+            width: 4px;
+            border-radius: 2px;
+            transition: all 0.1s;
+        }
+        .waveform.empty {
+            border: 2px dashed #E0E0E0;
+            border-radius: 12px;
+        }
+        .waveform.empty span {
+            font-size: 13px;
+            color: var(--outline);
+        }
+
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        .speed-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid #E0E0E0;
+            background: #fff;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .play-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .play-btn:hover { transform: scale(1.08); }
+        .duration {
+            font-size: 13px;
+            color: var(--outline);
+            width: 50px;
+            text-align: center;
+        }
+
+        /* Record Button */
+        .record-section {
+            text-align: center;
+            padding: 24px 0;
+        }
+        .record-btn {
+            width: 88px;
+            height: 88px;
+            border-radius: 44px;
+            background: #EA4335;
+            border: 5px solid #FFCDD2;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        .record-btn:hover { transform: scale(1.05); }
+        .record-btn.recording {
+            animation: pulse-record 1.5s infinite;
+        }
+        .record-btn .inner {
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        .record-btn.recording .inner {
+            border-radius: 6px;
+            width: 26px;
+            height: 26px;
+        }
+        @keyframes pulse-record {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(234, 67, 53, 0.4); }
+            50% { box-shadow: 0 0 0 24px rgba(234, 67, 53, 0); }
+        }
+        .record-hint {
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--outline);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            padding: 16px 20px 32px;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 28px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        .action-btn.outline {
+            background: #fff;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        .action-btn.filled {
+            background: var(--primary);
+            color: #fff;
+        }
+        .action-btn:hover { transform: translateY(-2px); }
+
+        /* Results */
+        .m3-tabs {
+            display: flex;
+            padding: 0 20px;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .m3-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--outline);
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        .m3-tab.active {
+            background: color-mix(in srgb, var(--primary) 15%, white);
+            color: var(--primary);
+        }
+
+        .big-score {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .big-score::before {
+            content: '';
+            position: absolute;
+            inset: 10px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        .big-score-inner {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        .big-score .value {
+            font-size: 48px;
+            font-weight: 700;
+        }
+        .big-score .label {
+            font-size: 14px;
+            color: var(--outline);
+        }
+        .score-message {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .breakdown {
+            padding: 0 20px;
+        }
+        .breakdown-item {
+            margin-bottom: 16px;
+        }
+        .breakdown-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        .breakdown-header span:last-child { font-weight: 600; }
+        .breakdown-bar {
+            height: 8px;
+            background: #E8EAF0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .breakdown-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-out;
+        }
+
+        /* Feedback */
+        .feedback-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 16px;
+            margin: 0 20px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .feedback-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .feedback-list {
+            list-style: none;
+        }
+        .feedback-list li {
+            padding: 8px 0;
+            font-size: 14px;
+            color: #555;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .feedback-list li::before {
+            content: '•';
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Bottom Nav - M3 Style */
+        .m3-nav {
+            display: flex;
+            background: var(--surface);
+            padding: 12px 8px 28px;
+            border-top: 1px solid #E8EAF0;
+        }
+        .m3-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .m3-nav-item:hover { background: var(--surface-variant); }
+        .m3-nav-item.active .icon-bg {
+            background: color-mix(in srgb, var(--primary) 20%, white);
+        }
+        .m3-nav-item .icon-bg {
+            width: 56px;
+            height: 32px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .m3-nav-item .label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--outline);
+        }
+        .m3-nav-item.active .label { color: var(--on-surface); }
+
+        /* Demo Navigation */
+        .demo-nav {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            background: #fff;
+            padding: 8px;
+            border-radius: 28px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .demo-nav button {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--outline);
+        }
+        .demo-nav button:hover { background: var(--surface-variant); }
+        .demo-nav button.active {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* Language specific colors */
+        [data-lang="en"] { --primary: #4285F4; }
+        [data-lang="es"] { --primary: #EA4335; }
+        [data-lang="fr"] { --primary: #5F6368; }
+        [data-lang="de"] { --primary: #FBBC04; }
+        [data-lang="it"] { --primary: #34A853; }
+        [data-lang="ja"] { --primary: #9C27B0; }
+        [data-lang="ko"] { --primary: #3F51B5; }
+        [data-lang="zh"] { --primary: #E91E63; }
+        [data-lang="pt"] { --primary: #00897B; }
+    </style>
+</head>
+<body>
+    <div class="phone-frame" id="app" data-lang="en">
+        <div class="dynamic-island"></div>
+
+        <!-- Screen 1: Pronunciation Home -->
+        <div class="screen active" id="screen1">
+            <div class="m3-header" style="background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 80%, black));">
+                <div class="m3-header-content">
+                    <div class="m3-header-top">
+                        <div>
+                            <h1 class="m3-title">Pronunciation</h1>
+                            <p class="m3-subtitle">Practice with native speakers</p>
+                        </div>
+                        <div class="quick-switch">
+                            <div class="quick-switch-item active" onclick="selectLang('en')">🇬🇧</div>
+                            <div class="quick-switch-item" onclick="selectLang('es')">🇪🇸</div>
+                            <div class="quick-switch-item" onclick="selectLang('ja')">🇯🇵</div>
+                        </div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stat-item">
+                            <div class="stat-value" id="stat-practiced">3</div>
+                            <div class="stat-label">practiced</div>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="stat-total">5</div>
+                            <div class="stat-label">phrases</div>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="stat-avg">78%</div>
+                            <div class="stat-label">avg score</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="lang-selector">
+                    <div class="lang-selector-title">Choose Language</div>
+                    <div class="lang-chips" id="langChips">
+                        <div class="lang-chip active" data-lang="en" onclick="selectLang('en')">
+                            <span class="flag">🇬🇧</span>
+                            <div>
+                                <div class="name">English</div>
+                                <div class="variant">American</div>
+                            </div>
+                        </div>
+                        <div class="lang-chip" data-lang="es" onclick="selectLang('es')">
+                            <span class="flag">🇪🇸</span>
+                            <div>
+                                <div class="name">Spanish</div>
+                                <div class="variant">Spain</div>
+                            </div>
+                        </div>
+                        <div class="lang-chip" data-lang="ja" onclick="selectLang('ja')">
+                            <span class="flag">🇯🇵</span>
+                            <div>
+                                <div class="name">Japanese</div>
+                            </div>
+                        </div>
+                        <div class="lang-chip" data-lang="zh" onclick="selectLang('zh')">
+                            <span class="flag">🇨🇳</span>
+                            <div>
+                                <div class="name">Chinese</div>
+                                <div class="variant">Mandarin</div>
+                            </div>
+                        </div>
+                        <div class="lang-chip" data-lang="ko" onclick="selectLang('ko')">
+                            <span class="flag">🇰🇷</span>
+                            <div>
+                                <div class="name">Korean</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="m3-search">
+                    <span class="icon">🔍</span>
+                    <input type="text" placeholder="Search English phrases...">
+                </div>
+
+                <div class="category-row">
+                    <div class="cat-chip active"><span class="emoji">👋</span> Greetings</div>
+                    <div class="cat-chip"><span class="emoji">🔢</span> Numbers</div>
+                    <div class="cat-chip"><span class="emoji">✈️</span> Travel</div>
+                    <div class="cat-chip"><span class="emoji">🍽️</span> Food</div>
+                    <div class="cat-chip"><span class="emoji">💼</span> Business</div>
+                </div>
+
+                <div class="diff-row">
+                    <div class="diff-pill beginner active">beginner</div>
+                    <div class="diff-pill intermediate">intermediate</div>
+                    <div class="diff-pill advanced">advanced</div>
+                </div>
+
+                <div id="phraseList">
+                    <!-- Phrases will be populated by JS -->
+                </div>
+            </div>
+
+            <div class="m3-nav">
+                <div class="m3-nav-item">
+                    <div class="icon-bg">🏠</div>
+                    <span class="label">Home</span>
+                </div>
+                <div class="m3-nav-item active">
+                    <div class="icon-bg">🎤</div>
+                    <span class="label">Practice</span>
+                </div>
+                <div class="m3-nav-item">
+                    <div class="icon-bg">📊</div>
+                    <span class="label">Progress</span>
+                </div>
+                <div class="m3-nav-item">
+                    <div class="icon-bg">⚙️</div>
+                    <span class="label">Settings</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 2: Session -->
+        <div class="screen" id="screen2">
+            <div class="session-header">
+                <button class="back-btn" onclick="showScreen(1)">←</button>
+                <span class="session-title">Pronunciation Practice</span>
+            </div>
+
+            <div class="phrase-display" id="phraseDisplay" style="background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 70%, black));">
+                <h2 id="currentPhrase">Hello, how are you?</h2>
+                <p class="ipa" id="currentIPA">/həˈloʊ haʊ ɑːr juː/</p>
+            </div>
+
+            <div class="audio-section">
+                <div class="audio-label">Native Speaker</div>
+                <div class="audio-card">
+                    <div class="waveform" id="refWaveform"></div>
+                    <div class="audio-controls">
+                        <button class="speed-btn">0.75x</button>
+                        <button class="play-btn" onclick="playReference()" style="background: var(--primary);">▶</button>
+                        <span class="duration">1.5s</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="audio-section">
+                <div class="audio-label">Your Pronunciation</div>
+                <div class="audio-card">
+                    <div class="waveform empty" id="userWaveform">
+                        <span id="waveformHint">Listen to native speaker first</span>
+                    </div>
+                    <div class="audio-controls" id="userControls" style="display: none;">
+                        <div style="width: 50px;"></div>
+                        <button class="play-btn" onclick="playUser()" style="background: #34A853;">▶</button>
+                        <span class="duration" id="userDuration">1.8s</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="record-section" id="recordSection">
+                <button class="record-btn" id="recordBtn" onclick="toggleRecording()">
+                    <div class="inner"></div>
+                </button>
+                <p class="record-hint" id="recordHint">Listen to native speaker first</p>
+            </div>
+
+            <div class="action-buttons" id="actionBtns" style="display: none;">
+                <button class="action-btn outline" onclick="resetRecording()">Re-record</button>
+                <button class="action-btn filled" onclick="showScreen(3)">Compare</button>
+            </div>
+        </div>
+
+        <!-- Screen 3: Results -->
+        <div class="screen" id="screen3">
+            <div class="session-header">
+                <button class="back-btn" onclick="showScreen(2)">←</button>
+                <span class="session-title">Results</span>
+            </div>
+
+            <div class="m3-tabs">
+                <button class="m3-tab active" onclick="showTab('overview')">Overview</button>
+                <button class="m3-tab" onclick="showTab('details')">Details</button>
+                <button class="m3-tab" onclick="showTab('feedback')">Feedback</button>
+            </div>
+
+            <div class="content" id="tabContent">
+                <div id="tab-overview">
+                    <div class="big-score" style="background: conic-gradient(var(--primary) 0% 78%, #E8EAF0 78% 100%);">
+                        <div class="big-score-inner">
+                            <div class="value" style="color: var(--primary);">78</div>
+                            <div class="label">/100</div>
+                        </div>
+                    </div>
+                    <p class="score-message" style="color: var(--primary);">Good job! 🎉</p>
+
+                    <div class="breakdown">
+                        <div class="breakdown-item">
+                            <div class="breakdown-header">
+                                <span>Rhythm</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill" style="width: 80%; background: #34A853;"></div>
+                            </div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-header">
+                                <span>Pitch</span>
+                                <span>72%</span>
+                            </div>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill" style="width: 72%; background: #FBBC04;"></div>
+                            </div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-header">
+                                <span>Clarity</span>
+                                <span>82%</span>
+                            </div>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill" style="width: 82%; background: #34A853;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-feedback" style="display: none;">
+                    <div class="feedback-card">
+                        <div class="feedback-title">💪 Strengths</div>
+                        <ul class="feedback-list">
+                            <li>Clear pronunciation of vowel sounds</li>
+                            <li>Good speech rhythm and natural pacing</li>
+                        </ul>
+                    </div>
+
+                    <div class="feedback-card">
+                        <div class="feedback-title">📈 Areas to Improve</div>
+                        <ul class="feedback-list">
+                            <li>Work on the "how" diphthong sound</li>
+                            <li>Rising intonation at question end</li>
+                        </ul>
+                    </div>
+
+                    <div class="feedback-card">
+                        <div class="feedback-title">💡 Tips</div>
+                        <ul class="feedback-list">
+                            <li>Try speaking slightly slower</li>
+                            <li>Listen to pitch changes in questions</li>
+                            <li>Practice the /aʊ/ sound separately</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn outline" onclick="showScreen(2); resetRecording();">Try Again</button>
+                <button class="action-btn filled" onclick="showScreen(1)">Next Phrase</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-nav">
+        <button class="active" onclick="showScreen(1)">1. Select</button>
+        <button onclick="showScreen(2)">2. Record</button>
+        <button onclick="showScreen(3)">3. Results</button>
+    </div>
+
+    <script>
+        // Language data
+        const phrases = {
+            en: [
+                { text: 'Hello, how are you?', ipa: 'həˈloʊ haʊ ɑːr juː', diff: 'beginner', score: 85 },
+                { text: 'Good morning', ipa: 'ɡʊd ˈmɔːrnɪŋ', diff: 'beginner', score: 72 },
+                { text: 'Nice to meet you', ipa: 'naɪs tuː miːt juː', diff: 'beginner', score: null },
+                { text: 'I would like to order', ipa: 'aɪ wʊd laɪk tuː ˈɔːrdər', diff: 'intermediate', score: 78 },
+                { text: 'She sells seashells', ipa: 'ʃiː selz ˈsiːʃelz', diff: 'advanced', score: null },
+            ],
+            es: [
+                { text: '¡Hola! ¿Cómo estás?', ipa: 'ola komo esˈtas', diff: 'beginner', score: 90 },
+                { text: 'Buenos días', ipa: 'ˈbwenos ˈdias', diff: 'beginner', score: null },
+                { text: 'Mucho gusto', ipa: 'ˈmutʃo ˈɣusto', diff: 'beginner', score: 65 },
+            ],
+            ja: [
+                { text: 'こんにちは', ipa: 'konnichiwa', diff: 'beginner', score: 70 },
+                { text: 'はじめまして', ipa: 'hajimemashite', diff: 'beginner', score: null },
+            ],
+            zh: [
+                { text: '你好', ipa: 'nǐ hǎo', diff: 'beginner', score: 55 },
+                { text: '很高兴认识你', ipa: 'hěn gāoxìng rènshí nǐ', diff: 'intermediate', score: null },
+            ],
+            ko: [
+                { text: '안녕하세요', ipa: 'annyeonghaseyo', diff: 'beginner', score: null },
+                { text: '만나서 반갑습니다', ipa: 'mannaseo bangapseumnida', diff: 'intermediate', score: 60 },
+            ],
+        };
+
+        const langColors = {
+            en: '#4285F4', es: '#EA4335', ja: '#9C27B0', zh: '#E91E63', ko: '#3F51B5'
+        };
+
+        let currentLang = 'en';
+        let isRecording = false;
+        let hasListened = false;
+        let waveformInterval;
+
+        function selectLang(lang) {
+            currentLang = lang;
+            document.getElementById('app').dataset.lang = lang;
+
+            // Update quick switch
+            document.querySelectorAll('.quick-switch-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.lang-chip').forEach(el => el.classList.remove('active'));
+
+            document.querySelectorAll(`.quick-switch-item`).forEach(el => {
+                if ((lang === 'en' && el.textContent.includes('🇬🇧')) ||
+                    (lang === 'es' && el.textContent.includes('🇪🇸')) ||
+                    (lang === 'ja' && el.textContent.includes('🇯🇵'))) {
+                    el.classList.add('active');
+                }
+            });
+
+            document.querySelector(`.lang-chip[data-lang="${lang}"]`)?.classList.add('active');
+
+            // Update stats
+            const langPhrases = phrases[lang] || [];
+            const practiced = langPhrases.filter(p => p.score !== null).length;
+            const total = langPhrases.length;
+            const avg = practiced > 0 ? Math.round(langPhrases.reduce((a, p) => a + (p.score || 0), 0) / practiced) : 0;
+
+            document.getElementById('stat-practiced').textContent = practiced;
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-avg').textContent = avg + '%';
+
+            // Update phrase list
+            renderPhrases();
+        }
+
+        function renderPhrases() {
+            const list = document.getElementById('phraseList');
+            const langPhrases = phrases[currentLang] || [];
+            const color = langColors[currentLang];
+
+            list.innerHTML = langPhrases.map((p, i) => `
+                <div class="phrase-card" style="border-left-color: ${color};" onclick="openSession(${i})">
+                    <div class="phrase-content">
+                        <div class="phrase-text">${p.text}</div>
+                        <div class="phrase-ipa">/${p.ipa}/</div>
+                        <div class="phrase-meta">
+                            <span class="phrase-badge ${p.diff}">${p.diff}</span>
+                        </div>
+                    </div>
+                    ${p.score !== null ?
+                        `<div class="score-circle ${p.score >= 80 ? 'high' : p.score >= 60 ? 'medium' : 'low'}"><span>${p.score}</span></div>` :
+                        `<div class="new-badge" style="background: ${color}20; color: ${color};">NEW</div>`
+                    }
+                </div>
+            `).join('');
+        }
+
+        function openSession(index) {
+            const phrase = phrases[currentLang][index];
+            document.getElementById('currentPhrase').textContent = phrase.text;
+            document.getElementById('currentIPA').textContent = '/' + phrase.ipa + '/';
+            showScreen(2);
+            resetRecording();
+        }
+
+        function showScreen(num) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen' + num).classList.add('active');
+            document.querySelectorAll('.demo-nav button').forEach((b, i) => {
+                b.classList.toggle('active', i === num - 1);
+            });
+        }
+
+        function playReference() {
+            const waveform = document.getElementById('refWaveform');
+            waveform.innerHTML = '';
+            const color = langColors[currentLang];
+
+            for (let i = 0; i < 35; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'waveform-bar';
+                bar.style.height = (Math.random() * 40 + 10) + 'px';
+                bar.style.background = '#E0E0E0';
+                waveform.appendChild(bar);
+            }
+
+            let pos = 0;
+            const bars = waveform.querySelectorAll('.waveform-bar');
+            const animInterval = setInterval(() => {
+                if (pos < bars.length) {
+                    bars[pos].style.background = color;
+                    pos++;
+                } else {
+                    clearInterval(animInterval);
+                    hasListened = true;
+                    document.getElementById('recordHint').textContent = 'Tap to start recording';
+                    document.getElementById('waveformHint').textContent = 'Tap the button to record';
+                }
+            }, 40);
+        }
+
+        function toggleRecording() {
+            if (!hasListened) return;
+
+            const btn = document.getElementById('recordBtn');
+            const waveform = document.getElementById('userWaveform');
+            const color = langColors[currentLang];
+
+            if (!isRecording) {
+                isRecording = true;
+                btn.classList.add('recording');
+                waveform.classList.remove('empty');
+                waveform.innerHTML = '';
+                document.getElementById('recordHint').textContent = 'Recording... Tap to stop';
+
+                waveformInterval = setInterval(() => {
+                    const bar = document.createElement('div');
+                    bar.className = 'waveform-bar';
+                    bar.style.height = (Math.random() * 40 + 10) + 'px';
+                    bar.style.background = '#EA4335';
+                    waveform.appendChild(bar);
+                    if (waveform.children.length > 35) waveform.removeChild(waveform.firstChild);
+                }, 50);
+            } else {
+                isRecording = false;
+                btn.classList.remove('recording');
+                clearInterval(waveformInterval);
+
+                // Change waveform color to green
+                waveform.querySelectorAll('.waveform-bar').forEach(bar => {
+                    bar.style.background = '#34A853';
+                });
+
+                document.getElementById('recordSection').style.display = 'none';
+                document.getElementById('actionBtns').style.display = 'flex';
+                document.getElementById('userControls').style.display = 'flex';
+            }
+        }
+
+        function resetRecording() {
+            const waveform = document.getElementById('userWaveform');
+            waveform.classList.add('empty');
+            waveform.innerHTML = '<span id="waveformHint">Tap the button to record</span>';
+            document.getElementById('actionBtns').style.display = 'none';
+            document.getElementById('userControls').style.display = 'none';
+            document.getElementById('recordSection').style.display = 'block';
+            document.getElementById('recordHint').textContent = hasListened ? 'Tap to start recording' : 'Listen to native speaker first';
+            isRecording = false;
+            document.getElementById('recordBtn').classList.remove('recording');
+        }
+
+        function playUser() {
+            const waveform = document.getElementById('userWaveform');
+            const bars = waveform.querySelectorAll('.waveform-bar');
+            let pos = 0;
+
+            bars.forEach(bar => bar.style.background = '#E0E0E0');
+
+            const animInterval = setInterval(() => {
+                if (pos < bars.length) {
+                    bars[pos].style.background = '#34A853';
+                    pos++;
+                } else {
+                    clearInterval(animInterval);
+                }
+            }, 50);
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.m3-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('tab-overview').style.display = tabName === 'overview' ? 'block' : 'none';
+            document.getElementById('tab-feedback').style.display = tabName === 'feedback' ? 'block' : 'none';
+        }
+
+        // Initialize
+        renderPhrases();
+
+        // Initialize reference waveform
+        const refWaveform = document.getElementById('refWaveform');
+        for (let i = 0; i < 35; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'waveform-bar';
+            bar.style.height = (Math.random() * 40 + 10) + 'px';
+            bar.style.background = '#E0E0E0';
+            refWaveform.appendChild(bar);
+        }
+    </script>
+</body>
+</html>
