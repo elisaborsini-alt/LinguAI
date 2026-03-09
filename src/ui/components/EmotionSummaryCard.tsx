@@ -1,9 +1,9 @@
+import type {EmotionalState} from '@appTypes/domain';
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import {Text} from './Text';
+
 import {Card} from './Card';
-import {useTheme} from '@state/hooks/useTheme';
-import type {EmotionalState} from '@appTypes/domain';
+import {Text} from './Text';
 
 interface EmotionDistribution {
   emotion: EmotionalState;
@@ -46,7 +46,6 @@ const TREND_CONFIG = {
 };
 
 export const EmotionSummaryCard: React.FC<EmotionSummaryCardProps> = ({summary}) => {
-  const {colors} = useTheme();
   const dominantConfig = EMOTION_CONFIG[summary.dominantEmotion];
   const engagementConfig = ENGAGEMENT_CONFIG[summary.engagementLevel];
   const trendConfig = TREND_CONFIG[summary.trend];

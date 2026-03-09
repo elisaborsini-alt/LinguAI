@@ -1,3 +1,4 @@
+import {useTheme} from '@state/hooks/useTheme';
 import React, {useEffect, useMemo} from 'react';
 import {View, StyleSheet, ViewStyle, Pressable} from 'react-native';
 import Animated, {
@@ -7,7 +8,6 @@ import Animated, {
   withSpring,
   Easing,
 } from 'react-native-reanimated';
-import {useTheme} from '@state/hooks/useTheme';
 
 interface WaveformVisualizerProps {
   audioData: number[]; // Normalized amplitudes 0-1
@@ -144,7 +144,7 @@ const WaveformBar: React.FC<WaveformBarProps> = ({
   amplitude,
   totalBars,
   playbackPosition,
-  isPlaying,
+  isPlaying: _isPlaying,
   color,
   activeColor,
   height,
@@ -294,7 +294,7 @@ export const WaveformComparison: React.FC<WaveformComparisonProps> = ({
 
   // Sample both datasets
   const sampleData = (data: number[]): number[] => {
-    if (!data || data.length === 0) return new Array(barCount).fill(0.1);
+    if (!data || data.length === 0) {return new Array(barCount).fill(0.1);}
     const result: number[] = [];
     const step = data.length / barCount;
     for (let i = 0; i < barCount; i++) {

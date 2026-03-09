@@ -1,3 +1,21 @@
+import type {ConversationStackScreenProps} from '@appTypes/navigation';
+import type {
+  PhraseCategory,
+  PronunciationPhrase,
+  PronunciationDifficulty,
+} from '@appTypes/pronunciation';
+import {useNavigation} from '@react-navigation/native';
+import {useLanguages} from '@state/hooks/useLanguages';
+import {useTheme} from '@state/hooks/useTheme';
+import {Text} from '@ui/components';
+import {
+  MiniScore,
+  LanguageSelector,
+  QuickLanguageSwitch,
+  toSelectorLanguage,
+} from '@ui/components/pronunciation';
+import type {Language} from '@ui/components/pronunciation';
+import {spacing} from '@ui/theme';
 import React, {useState, useCallback, useMemo, useEffect} from 'react';
 import {
   View,
@@ -7,41 +25,15 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
-  Dimensions,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
   FadeIn,
   FadeInDown,
   Layout,
 } from 'react-native-reanimated';
-import LinearGradient from 'react-native-linear-gradient';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {Text, Card} from '@ui/components';
-import {
-  MiniScore,
-  LanguageSelector,
-  QuickLanguageSwitch,
-  toSelectorLanguage,
-} from '@ui/components/pronunciation';
-import type {Language} from '@ui/components/pronunciation';
-import {useLanguages} from '@state/hooks/useLanguages';
-import {spacing} from '@ui/theme';
-import type {ConversationStackScreenProps} from '@appTypes/navigation';
-import type {
-  PhraseCategory,
-  PronunciationPhrase,
-  PronunciationDifficulty,
-} from '@appTypes/pronunciation';
 
 type NavigationProp = ConversationStackScreenProps<'PronunciationPractice'>['navigation'];
-
-const {width: SCREEN_WIDTH} = Dimensions.get('window');
 
 // Mock data with multi-language support
 const MOCK_CATEGORIES: PhraseCategory[] = [
@@ -125,9 +117,6 @@ export const PronunciationPracticeScreen: React.FC = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<PronunciationDifficulty | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Animation values
-  const headerOpacity = useSharedValue(1);
-
   // Get phrases for selected language
   const currentPhrases = useMemo(() => {
     return MOCK_PHRASES[selectedLanguage.code] || [];
@@ -136,8 +125,8 @@ export const PronunciationPracticeScreen: React.FC = () => {
   // Filter phrases
   const filteredPhrases = useMemo(() => {
     return currentPhrases.filter(phrase => {
-      if (selectedCategory && phrase.categoryId !== selectedCategory) return false;
-      if (selectedDifficulty && phrase.difficulty !== selectedDifficulty) return false;
+      if (selectedCategory && phrase.categoryId !== selectedCategory) {return false;}
+      if (selectedDifficulty && phrase.difficulty !== selectedDifficulty) {return false;}
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         return (

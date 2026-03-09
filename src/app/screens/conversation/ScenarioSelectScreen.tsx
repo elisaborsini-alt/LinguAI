@@ -1,3 +1,8 @@
+import {api} from '@data/api/client';
+import {useNavigation} from '@react-navigation/native';
+import {useTheme} from '@state/hooks/useTheme';
+import {Text, Button, Card} from '@ui/components';
+import {spacing} from '@ui/theme';
 import React, {useState, useEffect} from 'react';
 import {
   View,
@@ -8,13 +13,7 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 import Animated, {FadeInUp, FadeInRight} from 'react-native-reanimated';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {Text, Button, Card} from '@ui/components';
-import {spacing} from '@ui/theme';
-import {api} from '@data/api/client';
 
 interface Scenario {
   id: string;
@@ -120,10 +119,10 @@ export const ScenarioSelectScreen: React.FC = () => {
     ...group,
     scenarios: group.scenarios.filter(scenario =>
       scenario.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      scenario.description.toLowerCase().includes(searchQuery.toLowerCase())
+      scenario.description.toLowerCase().includes(searchQuery.toLowerCase()),
     ),
   })).filter(group =>
-    (!selectedGoal || group.goal === selectedGoal) && group.scenarios.length > 0
+    (!selectedGoal || group.goal === selectedGoal) && group.scenarios.length > 0,
   );
 
   if (loading) {

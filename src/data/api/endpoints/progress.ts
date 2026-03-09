@@ -1,4 +1,3 @@
-import {api} from '../client';
 import type {
   GetProgressOverviewResponse,
   GetWeeklyProgressRequest,
@@ -7,6 +6,8 @@ import type {
   GetDailyStatsResponse,
 } from '@appTypes/api';
 import type {ErrorPattern} from '@appTypes/domain';
+
+import {api} from '../client';
 
 export const progressApi = {
   /**

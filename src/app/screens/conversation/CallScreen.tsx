@@ -1,18 +1,9 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {View, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView} from 'react-native';
+import type {ConversationStackScreenProps} from '@appTypes/navigation';
+import {useEmotionAwareness} from '@core/emotion';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withTiming,
-  withSequence,
-} from 'react-native-reanimated';
-
+import {useConversation} from '@state/hooks/useConversation';
 import {useTheme} from '@state/hooks/useTheme';
 import {useVoice} from '@state/hooks/useVoice';
-import {useConversation} from '@state/hooks/useConversation';
-import {useEmotionAwareness} from '@core/emotion';
 import {useProgressStore} from '@state/stores/progressStore';
 import {Text, Card, Avatar} from '@ui/components';
 import {
@@ -21,7 +12,15 @@ import {
   EmotionHistory,
 } from '@ui/components/EmotionIndicator';
 import {spacing} from '@ui/theme';
-import type {ConversationStackScreenProps} from '@appTypes/navigation';
+import React, {useState, useEffect, useCallback} from 'react';
+import {View, StyleSheet, SafeAreaView, TouchableOpacity} from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+  withSequence,
+} from 'react-native-reanimated';
 
 type NavigationProp = ConversationStackScreenProps<'Call'>['navigation'];
 type RouteProp = ConversationStackScreenProps<'Call'>['route'];
@@ -41,7 +40,6 @@ export const CallScreen: React.FC = () => {
     isSpeaking,
     startListening,
     stopListening,
-    speak,
     startCall,
     endCall,
     toggleMute,
@@ -120,7 +118,7 @@ export const CallScreen: React.FC = () => {
 
   // Call duration timer
   useEffect(() => {
-    if (!isCallActive) return;
+    if (!isCallActive) {return;}
 
     const interval = setInterval(() => {
       setCallDuration((d) => d + 1);
@@ -149,7 +147,7 @@ export const CallScreen: React.FC = () => {
       const emotionSignals = getEmotionSignals(messages.length);
 
       // Send message with emotion signals for adaptive response
-      const response = await sendMessage(text, {
+      await sendMessage(text, {
         emotionSignals,
         currentEmotion,
         emotionConfidence: confidence,
@@ -267,13 +265,13 @@ export const CallScreen: React.FC = () => {
           </Text>
           <Text variant="bodyLarge" color="secondary" style={styles.permissionText}>
             To practice speaking together, LinguAI needs access to your microphone.
-            You can enable it in your device settings whenever you're ready.
+            You can enable it in your device settings whenever you&apos;re ready.
           </Text>
           <View style={styles.permissionButtons}>
             <TouchableOpacity
               onPress={async () => {
                 const granted = await requestPermission();
-                if (granted) setPermissionDenied(false);
+                if (granted) {setPermissionDenied(false);}
               }}
               style={[styles.permissionButton, {backgroundColor: colors.brand.primary}]}>
               <Text variant="labelLarge" style={{color: '#fff'}}>

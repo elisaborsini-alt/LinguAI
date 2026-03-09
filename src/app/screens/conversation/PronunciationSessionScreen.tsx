@@ -1,7 +1,6 @@
-import React, {useState, useCallback, useEffect} from 'react';
-import {View, StyleSheet, SafeAreaView, TouchableOpacity} from 'react-native';
+import type {ConversationStackScreenProps} from '@appTypes/navigation';
+import type {PronunciationPhrase, ReferenceAudio} from '@appTypes/pronunciation';
 import {useNavigation, useRoute} from '@react-navigation/native';
-
 import {useTheme} from '@state/hooks/useTheme';
 import {Text, Card, Button} from '@ui/components';
 import {
@@ -12,8 +11,8 @@ import {
   SpeedButton,
 } from '@ui/components/pronunciation';
 import {spacing} from '@ui/theme';
-import type {ConversationStackScreenProps} from '@appTypes/navigation';
-import type {PronunciationPhrase, ReferenceAudio} from '@appTypes/pronunciation';
+import React, {useState, useCallback, useEffect} from 'react';
+import {View, StyleSheet, SafeAreaView, TouchableOpacity} from 'react-native';
 
 type NavigationProp = ConversationStackScreenProps<'PronunciationSession'>['navigation'];
 type RouteProp = ConversationStackScreenProps<'PronunciationSession'>['route'];
@@ -88,8 +87,8 @@ export const PronunciationSessionScreen: React.FC = () => {
   // Handle speed change
   const handleSpeedChange = useCallback(() => {
     setPlaybackSpeed(prev => {
-      if (prev === 1) return 0.75;
-      if (prev === 0.75) return 0.5;
+      if (prev === 1) {return 0.75;}
+      if (prev === 0.75) {return 0.5;}
       return 1;
     });
   }, []);

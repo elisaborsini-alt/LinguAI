@@ -1,13 +1,12 @@
+import type {MainTabScreenProps} from '@appTypes/navigation';
+import {useNavigation} from '@react-navigation/native';
+import {useTheme} from '@state/hooks/useTheme';
+import {useProgressStore} from '@state/stores/progressStore';
+import {useUserStore} from '@state/stores/userStore';
+import {Text, Card, Avatar, ProgressBar} from '@ui/components';
+import {spacing} from '@ui/theme';
 import React from 'react';
 import {View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {useUserStore} from '@state/stores/userStore';
-import {useProgressStore} from '@state/stores/progressStore';
-import {Text, Button, Card, Avatar, ProgressBar} from '@ui/components';
-import {spacing} from '@ui/theme';
-import type {MainTabScreenProps} from '@appTypes/navigation';
 
 type NavigationProp = MainTabScreenProps<'HomeTab'>['navigation'];
 
@@ -16,8 +15,6 @@ export const HomeScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const {profile} = useUserStore();
   const {currentStreak, overview} = useProgressStore();
-
-  const targetLanguageName = getLanguageName(profile?.targetLanguage?.code);
 
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: colors.background.primary}]}>
@@ -197,19 +194,6 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({label, level}) => {
       </View>
     </View>
   );
-};
-
-const getLanguageName = (code?: string): string => {
-  const names: Record<string, string> = {
-    en: 'English',
-    es: 'Spanish',
-    pt: 'Portuguese',
-    fr: 'French',
-    de: 'German',
-    it: 'Italian',
-    ar: 'Arabic',
-  };
-  return names[code || ''] || 'Language';
 };
 
 const styles = StyleSheet.create({

@@ -1,6 +1,6 @@
 import {lightTheme, darkTheme, palette, Theme} from './colors';
-import {typography, Typography} from './typography';
 import {spacing, borderRadius, iconSize, hitSlop, Spacing, BorderRadius, IconSize} from './spacing';
+import {typography, Typography} from './typography';
 
 export {lightTheme, darkTheme, palette, typography, spacing, borderRadius, iconSize, hitSlop};
 export type {Theme, Typography, Spacing, BorderRadius, IconSize};

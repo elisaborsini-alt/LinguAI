@@ -1,9 +1,4 @@
-import {useCallback} from 'react';
-
-import {useConversationStore} from '@state/stores/conversationStore';
-import {useProgressStore} from '@state/stores/progressStore';
-import {api} from '@data/api/client';
-import type {EmotionSignals, EmotionalState} from '@core/emotion';
+import type {EndConversationResponse, SessionReportData} from '@appTypes/api';
 import type {
   Conversation,
   ConversationMode,
@@ -11,7 +6,12 @@ import type {
   ScenarioContext,
   Message,
 } from '@appTypes/domain';
-import type {EndConversationResponse, SessionReportData} from '@appTypes/api';
+import type {EmotionSignals, EmotionalState} from '@core/emotion';
+import {api} from '@data/api/client';
+import {useConversationStore} from '@state/stores/conversationStore';
+import {useProgressStore} from '@state/stores/progressStore';
+import {useCallback} from 'react';
+
 
 export interface EmotionContext {
   emotionSignals?: Partial<EmotionSignals>;
@@ -48,7 +48,6 @@ export const useConversation = (): UseConversationReturn => {
     addMessage,
     setLoading,
     setStreaming,
-    appendStreamingContent,
     clearStreamingContent,
     endConversation: storeEndConversation,
     setPendingCorrections,
@@ -178,7 +177,7 @@ export const useConversation = (): UseConversationReturn => {
   // End conversation — calls the real API
   // --------------------------------------------------------------------------
   const endConversation = useCallback(async (): Promise<SessionReportData | null> => {
-    if (!currentConversation) return null;
+    if (!currentConversation) {return null;}
 
     try {
       const response = await api.post<{data: EndConversationResponse}>(
@@ -190,7 +189,7 @@ export const useConversation = (): UseConversationReturn => {
 
       // Map backend report shape to frontend SessionReportData
       const report = response.data?.report;
-      if (!report) return null;
+      if (!report) {return null;}
 
       return {
         summary: report.summary,

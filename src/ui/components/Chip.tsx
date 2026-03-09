@@ -1,8 +1,8 @@
+import {useTheme} from '@state/hooks/useTheme';
+import {spacing, borderRadius} from '@ui/theme';
 import React from 'react';
 import {TouchableOpacity, StyleSheet, ViewStyle} from 'react-native';
 
-import {useTheme} from '@state/hooks/useTheme';
-import {spacing, borderRadius} from '@ui/theme';
 
 import {Text} from './Text';
 

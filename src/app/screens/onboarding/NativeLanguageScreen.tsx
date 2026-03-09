@@ -1,3 +1,10 @@
+import type {OnboardingStackScreenProps} from '@appTypes/navigation';
+import {useNavigation} from '@react-navigation/native';
+import {useLanguages} from '@state/hooks/useLanguages';
+import {useTheme} from '@state/hooks/useTheme';
+import {useUserStore} from '@state/stores/userStore';
+import {Text, Button, Card} from '@ui/components';
+import {spacing} from '@ui/theme';
 import React, {useState, useMemo} from 'react';
 import {
   View,
@@ -8,14 +15,6 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {useUserStore} from '@state/stores/userStore';
-import {useLanguages} from '@state/hooks/useLanguages';
-import {Text, Button, Card} from '@ui/components';
-import {spacing} from '@ui/theme';
-import type {OnboardingStackScreenProps} from '@appTypes/navigation';
 
 type NavigationProp = OnboardingStackScreenProps<'NativeLanguage'>['navigation'];
 
@@ -29,7 +28,7 @@ export const NativeLanguageScreen: React.FC = () => {
   const [search, setSearch] = useState('');
 
   const filteredLanguages = useMemo(() => {
-    if (!search.trim()) return languages;
+    if (!search.trim()) {return languages;}
     const q = search.toLowerCase();
     return languages.filter(
       l =>
@@ -40,7 +39,7 @@ export const NativeLanguageScreen: React.FC = () => {
   }, [languages, search]);
 
   const handleContinue = () => {
-    if (!selected) return;
+    if (!selected) {return;}
     setOnboardingData({nativeLanguage: selected});
     navigation.navigate('TargetLanguage', {nativeLanguage: selected});
   };
@@ -62,10 +61,10 @@ export const NativeLanguageScreen: React.FC = () => {
           STEP 1 OF 6
         </Text>
         <Text variant="headlineMedium" style={styles.title}>
-          What's your native language?
+          What&apos;s your native language?
         </Text>
         <Text variant="bodyLarge" color="secondary">
-          We'll use this to personalize your learning experience
+          We&apos;ll use this to personalize your learning experience
         </Text>
       </View>
 

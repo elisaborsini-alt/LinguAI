@@ -1,9 +1,10 @@
-import {api} from '../client';
 import type {
   GetMemoryResponse,
   UpdateMemoryRequest,
   ClearMemoryRequest,
 } from '@appTypes/api';
+
+import {api} from '../client';
 
 export const memoryApi = {
   /**

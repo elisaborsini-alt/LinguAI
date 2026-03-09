@@ -1,8 +1,7 @@
+import {useAuthStore} from '@state/stores/authStore';
 import axios, {AxiosInstance, AxiosError, InternalAxiosRequestConfig} from 'axios';
 import Config from 'react-native-config';
 
-import {useAuthStore} from '@state/stores/authStore';
-import {storageHelpers} from '@data/storage/mmkv';
 
 // API Configuration
 const API_BASE_URL = Config.API_BASE_URL || 'http://localhost:3000/api';

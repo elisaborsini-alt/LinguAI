@@ -1,7 +1,3 @@
-import {create} from 'zustand';
-import {persist, createJSONStorage} from 'zustand/middleware';
-import {immer} from 'zustand/middleware/immer';
-
 import type {
   UserProfile,
   UserPreferences,
@@ -11,6 +7,10 @@ import type {
   LanguageCode,
 } from '@appTypes/domain';
 import {storage} from '@data/storage/mmkv';
+import {create} from 'zustand';
+import {persist, createJSONStorage} from 'zustand/middleware';
+import {immer} from 'zustand/middleware/immer';
+
 
 interface UserState {
   // Onboarding state

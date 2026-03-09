@@ -1,13 +1,12 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
+import type {UserPreferences} from '@appTypes/domain';
+import type {OnboardingStackScreenProps} from '@appTypes/navigation';
 import {useNavigation} from '@react-navigation/native';
-
 import {useTheme} from '@state/hooks/useTheme';
 import {useUserStore} from '@state/stores/userStore';
 import {Text, Button, Card, Chip} from '@ui/components';
 import {spacing} from '@ui/theme';
-import type {OnboardingStackScreenProps} from '@appTypes/navigation';
-import type {UserPreferences} from '@appTypes/domain';
+import React, {useState} from 'react';
+import {View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
 
 type NavigationProp = OnboardingStackScreenProps<'Preferences'>['navigation'];
 
@@ -114,7 +113,7 @@ export const PreferencesScreen: React.FC = () => {
             AI Voice
           </Text>
           <Text variant="bodySmall" color="secondary" style={styles.sectionDescription}>
-            Choose your AI tutor's voice
+            Choose your AI tutor&apos;s voice
           </Text>
           <View style={styles.chipGroup}>
             <Chip

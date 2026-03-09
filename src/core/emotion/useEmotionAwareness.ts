@@ -1,4 +1,5 @@
 import {useState, useEffect, useCallback, useRef} from 'react';
+
 import {audioAnalyzer, EmotionSignals} from './audioAnalyzer';
 
 export type EmotionalState =
@@ -238,33 +239,33 @@ function detectEmotionFromSignals(signals: EmotionSignals): {
   };
 
   // Frustrated detection
-  if (signals.fluency.hesitations >= 3) scores.frustrated += 0.3;
-  if (signals.fluency.restarts >= 2) scores.frustrated += 0.3;
-  if (signals.pauses.frequency >= 4) scores.frustrated += 0.2;
+  if (signals.fluency.hesitations >= 3) {scores.frustrated += 0.3;}
+  if (signals.fluency.restarts >= 2) {scores.frustrated += 0.3;}
+  if (signals.pauses.frequency >= 4) {scores.frustrated += 0.2;}
 
   // Anxious detection
-  if (signals.speechRate.wordsPerMinute >= 160) scores.anxious += 0.3;
-  if (signals.pitch.variance >= 50) scores.anxious += 0.3;
-  if (signals.energy.variance >= 0.3) scores.anxious += 0.2;
+  if (signals.speechRate.wordsPerMinute >= 160) {scores.anxious += 0.3;}
+  if (signals.pitch.variance >= 50) {scores.anxious += 0.3;}
+  if (signals.energy.variance >= 0.3) {scores.anxious += 0.2;}
 
   // Bored detection
-  if (signals.speechRate.wordsPerMinute <= 100) scores.bored += 0.3;
-  if (signals.pitch.variance <= 20) scores.bored += 0.3;
-  if (signals.energy.mean <= 0.3) scores.bored += 0.3;
+  if (signals.speechRate.wordsPerMinute <= 100) {scores.bored += 0.3;}
+  if (signals.pitch.variance <= 20) {scores.bored += 0.3;}
+  if (signals.energy.mean <= 0.3) {scores.bored += 0.3;}
 
   // Enthusiastic detection
-  if (signals.speechRate.wordsPerMinute >= 140) scores.enthusiastic += 0.25;
-  if (signals.energy.mean >= 0.6) scores.enthusiastic += 0.35;
+  if (signals.speechRate.wordsPerMinute >= 140) {scores.enthusiastic += 0.25;}
+  if (signals.energy.mean >= 0.6) {scores.enthusiastic += 0.35;}
 
   // Tired detection
-  if (signals.speechRate.wordsPerMinute <= 90) scores.tired += 0.3;
-  if (signals.energy.mean <= 0.25) scores.tired += 0.4;
-  if (signals.pauses.averageDuration >= 800) scores.tired += 0.2;
+  if (signals.speechRate.wordsPerMinute <= 90) {scores.tired += 0.3;}
+  if (signals.energy.mean <= 0.25) {scores.tired += 0.4;}
+  if (signals.pauses.averageDuration >= 800) {scores.tired += 0.2;}
 
   // Confused detection
-  if (signals.fluency.incompleteUtterances >= 2) scores.confused += 0.4;
-  if (signals.pauses.frequency >= 5) scores.confused += 0.3;
-  if (signals.pitch.trend === 'rising') scores.confused += 0.2;
+  if (signals.fluency.incompleteUtterances >= 2) {scores.confused += 0.4;}
+  if (signals.pauses.frequency >= 5) {scores.confused += 0.3;}
+  if (signals.pitch.trend === 'rising') {scores.confused += 0.2;}
 
   // Confident detection
   if (

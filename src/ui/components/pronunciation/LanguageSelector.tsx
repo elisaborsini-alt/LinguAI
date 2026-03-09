@@ -1,3 +1,6 @@
+import {useTheme} from '@state/hooks/useTheme';
+import {Text} from '@ui/components';
+import {spacing} from '@ui/theme';
 import React, {useState, useCallback} from 'react';
 import {
   View,
@@ -15,9 +18,6 @@ import Animated, {
   interpolateColor,
 } from 'react-native-reanimated';
 
-import {useTheme} from '@state/hooks/useTheme';
-import {Text} from '@ui/components';
-import {spacing} from '@ui/theme';
 
 export interface Language {
   code: string;
@@ -125,6 +125,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         <LanguageModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
+          languages={selectorLanguages}
           selectedLanguage={selectedLanguage}
           selectedVariant={selectedVariant}
           expandedLanguage={expandedLanguage}
@@ -270,6 +271,7 @@ const LanguageChip: React.FC<LanguageChipProps> = ({
 interface LanguageModalProps {
   visible: boolean;
   onClose: () => void;
+  languages: Language[];
   selectedLanguage: Language | null;
   selectedVariant?: string;
   expandedLanguage: string | null;
@@ -280,6 +282,7 @@ interface LanguageModalProps {
 const LanguageModal: React.FC<LanguageModalProps> = ({
   visible,
   onClose,
+  languages,
   selectedLanguage,
   selectedVariant,
   expandedLanguage,
@@ -303,7 +306,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
           </Text>
 
           <ScrollView style={styles.modalScroll}>
-            {selectorLanguages.map((language) => (
+            {languages.map((language: Language) => (
               <View key={language.code}>
                 <TouchableOpacity
                   style={[
@@ -333,7 +336,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
 
                 {expandedLanguage === language.code && language.variants && (
                   <View style={styles.modalVariants}>
-                    {language.variants.map((variant) => (
+                    {language.variants.map((variant: {code: string; name: string}) => (
                       <TouchableOpacity
                         key={variant.code}
                         style={[

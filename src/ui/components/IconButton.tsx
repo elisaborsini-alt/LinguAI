@@ -1,3 +1,5 @@
+import {useTheme} from '@state/hooks/useTheme';
+import {borderRadius, hitSlop} from '@ui/theme';
 import React from 'react';
 import {
   TouchableOpacity,
@@ -7,8 +9,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import {useTheme} from '@state/hooks/useTheme';
-import {borderRadius, hitSlop, iconSize as iconSizes} from '@ui/theme';
 
 type IconButtonVariant = 'default' | 'filled' | 'outlined' | 'ghost';
 type IconButtonSize = 'small' | 'medium' | 'large';

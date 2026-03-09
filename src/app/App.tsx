@@ -1,11 +1,11 @@
+import {RootNavigator} from '@app/navigation';
+import {useTheme} from '@state/hooks/useTheme';
+import {useAuthStore} from '@state/stores/authStore';
 import React, {useEffect} from 'react';
 import {StatusBar, LogBox} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
-import {RootNavigator} from '@app/navigation';
-import {useAuthStore} from '@state/stores/authStore';
-import {useTheme} from '@state/hooks/useTheme';
 
 // Ignore specific warnings in development
 LogBox.ignoreLogs([

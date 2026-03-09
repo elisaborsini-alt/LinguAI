@@ -1,3 +1,11 @@
+import type {MainTabScreenProps} from '@appTypes/navigation';
+import {progressApi} from '@data/api/endpoints/progress';
+import type {ProgressSummary, TimeMachineResult} from '@data/api/endpoints/progress';
+import {storageHelpers} from '@data/storage/mmkv';
+import {useNavigation} from '@react-navigation/native';
+import {useTheme} from '@state/hooks/useTheme';
+import {Text, Button} from '@ui/components';
+import {spacing, borderRadius} from '@ui/theme';
 import React, {useState, useEffect, useCallback} from 'react';
 import {
   View,
@@ -7,16 +15,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 import Animated, {FadeInUp} from 'react-native-reanimated';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {Text, Button} from '@ui/components';
-import {spacing, borderRadius} from '@ui/theme';
-import {progressApi} from '@data/api/endpoints/progress';
-import type {ProgressSummary, TimeMachineResult} from '@data/api/endpoints/progress';
-import {storageHelpers} from '@data/storage/mmkv';
-import type {MainTabScreenProps} from '@appTypes/navigation';
 
 type NavigationProp = MainTabScreenProps<'ProgressTab'>['navigation'];
 
@@ -69,7 +68,7 @@ export const ProgressDashboardScreen: React.FC = () => {
   };
 
   const navigateToTimeMachine = () => {
-    if (!timeMachine) return;
+    if (!timeMachine) {return;}
     storageHelpers.setNumber('timeMachineLastViewed', Date.now());
     navigation.navigate('ProgressTab', {
       screen: 'TimeMachine',

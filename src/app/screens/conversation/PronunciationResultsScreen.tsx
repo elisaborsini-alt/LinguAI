@@ -1,23 +1,21 @@
-import React, {useState, useCallback} from 'react';
-import {View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {Text, Card, Button} from '@ui/components';
-import {
-  ScoreCircle,
-  ScoreBreakdown,
-  WaveformComparison,
-  PitchContourChart,
-  TimingComparison,
-} from '@ui/components/pronunciation';
-import {spacing} from '@ui/theme';
 import type {ConversationStackScreenProps} from '@appTypes/navigation';
 import type {
   PronunciationAnalysis,
   PronunciationFeedback,
   PitchPoint,
 } from '@appTypes/pronunciation';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useTheme} from '@state/hooks/useTheme';
+import {Text, Card, Button} from '@ui/components';
+import {
+  ScoreCircle,
+  WaveformComparison,
+  PitchContourChart,
+  TimingComparison,
+} from '@ui/components/pronunciation';
+import {spacing} from '@ui/theme';
+import React, {useState, useCallback} from 'react';
+import {View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
 
 type NavigationProp = ConversationStackScreenProps<'PronunciationResults'>['navigation'];
 type RouteProp = ConversationStackScreenProps<'PronunciationResults'>['route'];
@@ -132,10 +130,10 @@ export const PronunciationResultsScreen: React.FC = () => {
   }, [navigation]);
 
   const getScoreMessage = (score: number): string => {
-    if (score >= 90) return 'Molto vicino al riferimento';
-    if (score >= 80) return 'Vicino al riferimento';
-    if (score >= 70) return 'In costruzione';
-    if (score >= 60) return 'Stiamo lavorando su questo';
+    if (score >= 90) {return 'Molto vicino al riferimento';}
+    if (score >= 80) {return 'Vicino al riferimento';}
+    if (score >= 70) {return 'In costruzione';}
+    if (score >= 60) {return 'Stiamo lavorando su questo';}
     return "C'è spazio per esplorare";
   };
 
@@ -321,7 +319,7 @@ export const PronunciationResultsScreen: React.FC = () => {
             </View>
             {issue.segment && (
               <Text variant="labelSmall" color="secondary">
-                "{issue.segment}"
+                &quot;{issue.segment}&quot;
               </Text>
             )}
           </View>
@@ -420,8 +418,8 @@ const ScoreItem: React.FC<ScoreItemProps> = ({label, score, icon}) => {
   const {colors} = useTheme();
 
   const getScoreColor = (value: number): string => {
-    if (value >= 80) return colors.semantic.success;
-    if (value >= 60) return colors.semantic.warning;
+    if (value >= 80) {return colors.semantic.success;}
+    if (value >= 60) {return colors.semantic.warning;}
     return colors.semantic.error;
   };
 

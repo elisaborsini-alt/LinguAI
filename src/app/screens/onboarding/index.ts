@@ -1,3 +1,4 @@
+export { default as DeviceLanguageScreen } from './DeviceLanguageScreen';
 export { default as NativeLanguageScreen } from './NativeLanguageScreen';
 export { default as TargetLanguageScreen } from './TargetLanguageScreen';
 export { default as LanguageVariantScreen } from './LanguageVariantScreen';

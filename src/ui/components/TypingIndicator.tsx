@@ -1,3 +1,5 @@
+import {useTheme} from '@state/hooks/useTheme';
+import {spacing, borderRadius} from '@ui/theme';
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import Animated, {
@@ -9,8 +11,6 @@ import Animated, {
   withSequence,
 } from 'react-native-reanimated';
 
-import {useTheme} from '@state/hooks/useTheme';
-import {spacing, borderRadius} from '@ui/theme';
 
 interface TypingIndicatorProps {
   /** Dot color override (defaults to chat.aiText at 40% opacity) */

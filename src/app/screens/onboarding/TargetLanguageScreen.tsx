@@ -1,3 +1,10 @@
+import type {OnboardingStackScreenProps} from '@appTypes/navigation';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useLanguages} from '@state/hooks/useLanguages';
+import {useTheme} from '@state/hooks/useTheme';
+import {useUserStore} from '@state/stores/userStore';
+import {Text, Button, Card} from '@ui/components';
+import {spacing} from '@ui/theme';
 import React, {useState, useMemo} from 'react';
 import {
   View,
@@ -8,14 +15,6 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {useUserStore} from '@state/stores/userStore';
-import {useLanguages} from '@state/hooks/useLanguages';
-import {Text, Button, Card} from '@ui/components';
-import {spacing} from '@ui/theme';
-import type {OnboardingStackScreenProps} from '@appTypes/navigation';
 
 type NavigationProp = OnboardingStackScreenProps<'TargetLanguage'>['navigation'];
 type RouteProp = OnboardingStackScreenProps<'TargetLanguage'>['route'];
@@ -34,7 +33,7 @@ export const TargetLanguageScreen: React.FC = () => {
   // Filter out native language and apply search
   const availableLanguages = useMemo(() => {
     const filtered = languages.filter((lang) => lang.code !== nativeLanguage);
-    if (!search.trim()) return filtered;
+    if (!search.trim()) {return filtered;}
     const q = search.toLowerCase();
     return filtered.filter(
       l =>
@@ -45,10 +44,10 @@ export const TargetLanguageScreen: React.FC = () => {
   }, [languages, nativeLanguage, search]);
 
   const handleContinue = () => {
-    if (!selected) return;
+    if (!selected) {return;}
 
     const selectedLang = languages.find((l) => l.code === selected);
-    if (!selectedLang) return;
+    if (!selectedLang) {return;}
 
     if (selectedLang.variants.length > 1) {
       // Multiple variants — let user choose

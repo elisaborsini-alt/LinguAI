@@ -1,3 +1,4 @@
+import {useTheme} from '@state/hooks/useTheme';
 import React, {useEffect} from 'react';
 import {View, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import Animated, {
@@ -8,8 +9,8 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
+
 import {Text} from '../Text';
-import {useTheme} from '@state/hooks/useTheme';
 
 interface RecordingButtonProps {
   isRecording: boolean;

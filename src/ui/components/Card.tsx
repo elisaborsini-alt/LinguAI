@@ -1,8 +1,8 @@
+import {useTheme} from '@state/hooks/useTheme';
+import {spacing, borderRadius, shadows} from '@ui/theme';
 import React from 'react';
 import {View, ViewProps, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 
-import {useTheme} from '@state/hooks/useTheme';
-import {spacing, borderRadius, shadows} from '@ui/theme';
 
 type CardVariant = 'default' | 'outlined' | 'elevated';
 

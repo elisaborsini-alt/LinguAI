@@ -1,16 +1,15 @@
-import {create} from 'zustand';
-import {persist, createJSONStorage} from 'zustand/middleware';
-import {immer} from 'zustand/middleware/immer';
-
 import type {
   ProgressOverview,
   WeeklyProgress,
   DailyStats,
   ErrorPattern,
-  CEFRLevel,
   EmotionalState,
 } from '@appTypes/domain';
 import {storage} from '@data/storage/mmkv';
+import {create} from 'zustand';
+import {persist, createJSONStorage} from 'zustand/middleware';
+import {immer} from 'zustand/middleware/immer';
+
 
 // Emotion tracking types
 export interface EmotionSessionData {
@@ -99,7 +98,7 @@ const getTodayString = (): string => {
 
 export const useProgressStore = create<ProgressState>()(
   persist(
-    immer((set, get) => ({
+    immer((set, _get) => ({
       // Initial state
       overview: null,
       weeklyProgress: null,

@@ -1,3 +1,9 @@
+import type {AuthStackScreenProps} from '@appTypes/navigation';
+import {useNavigation} from '@react-navigation/native';
+import {useAuth} from '@state/hooks/useAuth';
+import {useTheme} from '@state/hooks/useTheme';
+import {Text, Button, Input} from '@ui/components';
+import {spacing} from '@ui/theme';
 import React, {useState} from 'react';
 import {
   View,
@@ -8,13 +14,6 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {useAuth} from '@state/hooks/useAuth';
-import {Text, Button, Input} from '@ui/components';
-import {spacing} from '@ui/theme';
-import type {AuthStackScreenProps} from '@appTypes/navigation';
 
 type NavigationProp = AuthStackScreenProps<'Register'>['navigation'];
 
@@ -64,7 +63,7 @@ export const RegisterScreen: React.FC = () => {
   };
 
   const handleRegister = async () => {
-    if (!validate()) return;
+    if (!validate()) {return;}
 
     try {
       await register({email, password, name: name.trim()});

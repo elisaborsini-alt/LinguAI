@@ -1,12 +1,11 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, SafeAreaView, TouchableOpacity} from 'react-native';
+import type {CEFRLevel} from '@appTypes/domain';
+import type {OnboardingStackScreenProps} from '@appTypes/navigation';
 import {useNavigation, useRoute} from '@react-navigation/native';
-
 import {useTheme} from '@state/hooks/useTheme';
 import {Text, Button, Card} from '@ui/components';
 import {spacing} from '@ui/theme';
-import type {OnboardingStackScreenProps} from '@appTypes/navigation';
-import type {CEFRLevel} from '@appTypes/domain';
+import React, {useState} from 'react';
+import {View, StyleSheet, SafeAreaView, TouchableOpacity} from 'react-native';
 
 type NavigationProp = OnboardingStackScreenProps<'LevelAssessment'>['navigation'];
 type RouteProp = OnboardingStackScreenProps<'LevelAssessment'>['route'];
@@ -59,7 +58,7 @@ export const LevelAssessmentScreen: React.FC = () => {
   const [selected, setSelected] = useState<CEFRLevel | null>(null);
 
   const handleContinue = () => {
-    if (!selected) return;
+    if (!selected) {return;}
 
     navigation.navigate('Preferences', {
       nativeLanguage,
@@ -87,7 +86,7 @@ export const LevelAssessmentScreen: React.FC = () => {
           How would you describe your current level?
         </Text>
         <Text variant="bodyLarge" color="secondary">
-          Don't worry, we'll adjust based on your actual conversations
+          Don&apos;t worry, we&apos;ll adjust based on your actual conversations
         </Text>
       </View>
 

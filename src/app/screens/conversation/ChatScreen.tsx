@@ -1,3 +1,10 @@
+import type {Message} from '@appTypes/domain';
+import type {ConversationStackScreenProps} from '@appTypes/navigation';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useConversation} from '@state/hooks/useConversation';
+import {useTheme} from '@state/hooks/useTheme';
+import {Text} from '@ui/components';
+import {spacing, borderRadius} from '@ui/theme';
 import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
@@ -9,14 +16,6 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {useConversation} from '@state/hooks/useConversation';
-import {Text, Card, IconButton} from '@ui/components';
-import {spacing, borderRadius} from '@ui/theme';
-import type {ConversationStackScreenProps} from '@appTypes/navigation';
-import type {Message} from '@appTypes/domain';
 
 type NavigationProp = ConversationStackScreenProps<'Chat'>['navigation'];
 type RouteProp = ConversationStackScreenProps<'Chat'>['route'];
@@ -56,7 +55,7 @@ export const ChatScreen: React.FC = () => {
   }, [messages]);
 
   const handleSend = async () => {
-    if (!inputText.trim() || isLoading) return;
+    if (!inputText.trim() || isLoading) {return;}
 
     const text = inputText.trim();
     setInputText('');
@@ -114,7 +113,7 @@ export const ChatScreen: React.FC = () => {
                 key={index}
                 variant="bodySmall"
                 style={{color: colors.chat.correctionText}}>
-                "{correction.original}" → "{correction.correction}"
+                &quot;{correction.original}&quot; → &quot;{correction.correction}&quot;
                 {correction.explanation && ` (${correction.explanation})`}
               </Text>
             ))}

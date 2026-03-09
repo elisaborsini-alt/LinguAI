@@ -1,16 +1,15 @@
-import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
+import type {ConversationStackScreenProps} from '@appTypes/navigation';
+import {progressApi} from '@data/api/endpoints/progress';
+import type {MomentumInsight} from '@data/api/endpoints/progress';
+import {storageHelpers} from '@data/storage/mmkv';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import Animated, {FadeInUp, FadeInDown} from 'react-native-reanimated';
 import {useTheme} from '@state/hooks/useTheme';
 import {Text, Button} from '@ui/components';
 import {MomentumCard} from '@ui/components/MomentumCard';
 import {spacing, borderRadius} from '@ui/theme';
-import {progressApi} from '@data/api/endpoints/progress';
-import type {MomentumInsight} from '@data/api/endpoints/progress';
-import type {ConversationStackScreenProps} from '@appTypes/navigation';
-import {storageHelpers} from '@data/storage/mmkv';
-import type {SessionReportData} from '@appTypes/api';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
+import Animated, {FadeInUp, FadeInDown} from 'react-native-reanimated';
 
 type NavigationProp = ConversationStackScreenProps<'SessionSummary'>['navigation'];
 type RouteProp = ConversationStackScreenProps<'SessionSummary'>['route'];
@@ -27,7 +26,6 @@ interface ScoreCircleProps {
 }
 
 const ScoreCircle: React.FC<ScoreCircleProps> = ({score, label, size, color}) => {
-  const {colors} = useTheme();
   const dimension = size === 'large' ? 96 : 64;
   const fontSize = size === 'large' ? 28 : 18;
   const labelSize = size === 'large' ? 'bodySmall' : 'caption';
@@ -67,13 +65,13 @@ export const SessionSummaryScreen: React.FC = () => {
   const [momentum, setMomentum] = useState<MomentumInsight | null>(null);
 
   useEffect(() => {
-    if (!report) return;
+    if (!report) {return;}
 
     const COOLDOWN_KEY = 'momentum_last_shown';
     const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
     const lastShown = storageHelpers.getNumber(COOLDOWN_KEY);
-    if (lastShown && Date.now() - lastShown < SEVEN_DAYS_MS) return;
+    if (lastShown && Date.now() - lastShown < SEVEN_DAYS_MS) {return;}
 
     (async () => {
       try {

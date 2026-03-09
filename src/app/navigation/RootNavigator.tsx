@@ -1,22 +1,19 @@
-import React from 'react';
+import type {RootStackParamList} from '@appTypes/navigation';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-
 import {useAuthStore} from '@state/stores/authStore';
-import {useUserStore} from '@state/stores/userStore';
-import type {RootStackParamList} from '@appTypes/navigation';
+import React from 'react';
 
 import AuthNavigator from './AuthNavigator';
-import OnboardingNavigator from './OnboardingNavigator';
 import MainNavigator from './MainNavigator';
+import OnboardingNavigator from './OnboardingNavigator';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigator: React.FC = () => {
-  const {isAuthenticated, isInitialized} = useAuthStore();
-  const {profile} = useUserStore();
+  const {isAuthenticated, isInitialized, user} = useAuthStore();
 
-  const hasCompletedOnboarding = profile?.onboardingCompleted ?? false;
+  const hasCompletedOnboarding = user?.onboardingCompleted ?? false;
 
   // Show loading while initializing
   if (!isInitialized) {

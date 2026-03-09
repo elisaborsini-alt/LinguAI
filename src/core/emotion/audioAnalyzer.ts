@@ -76,7 +76,7 @@ export interface EmotionSignals {
 // Constants for audio analysis
 const SILENCE_THRESHOLD = 0.05; // Normalized amplitude threshold for silence
 const PAUSE_MIN_DURATION = 200; // Minimum pause duration in ms
-const PITCH_SAMPLE_RATE = 50; // Hz for pitch tracking
+// Pitch sample rate: 50 Hz for pitch tracking (reserved for future use)
 
 class AudioAnalyzer {
   private audioContext: AudioContext | null = null;
@@ -269,7 +269,7 @@ class AudioAnalyzer {
     const elapsedMs = Date.now() - this.sessionStartTime;
     const totalPauseDuration = this.pauseTimestamps.reduce(
       (sum, p) => sum + (p.end - p.start),
-      0
+      0,
     );
 
     return {
@@ -303,7 +303,7 @@ class AudioAnalyzer {
           : 0,
         longestPause: Math.max(
           ...this.pauseTimestamps.map(p => p.end - p.start),
-          0
+          0,
         ),
       },
       totalDuration: elapsedMs,
@@ -392,19 +392,19 @@ class AudioAnalyzer {
   }
 
   private calculateMean(values: number[]): number {
-    if (values.length === 0) return 0;
+    if (values.length === 0) {return 0;}
     return values.reduce((a, b) => a + b, 0) / values.length;
   }
 
   private calculateVariance(values: number[]): number {
-    if (values.length < 2) return 0;
+    if (values.length < 2) {return 0;}
     const mean = this.calculateMean(values);
     const squaredDiffs = values.map(v => Math.pow(v - mean, 2));
     return this.calculateMean(squaredDiffs);
   }
 
   private calculateTrend(values: number[]): 'rising' | 'falling' | 'stable' {
-    if (values.length < 5) return 'stable';
+    if (values.length < 5) {return 'stable';}
 
     const recentHalf = values.slice(-Math.floor(values.length / 2));
     const olderHalf = values.slice(0, Math.floor(values.length / 2));
@@ -414,13 +414,13 @@ class AudioAnalyzer {
 
     const threshold = 0.1 * olderMean;
 
-    if (recentMean > olderMean + threshold) return 'rising';
-    if (recentMean < olderMean - threshold) return 'falling';
+    if (recentMean > olderMean + threshold) {return 'rising';}
+    if (recentMean < olderMean - threshold) {return 'falling';}
     return 'stable';
   }
 
   private countPeaks(values: number[]): number {
-    if (values.length < 3) return 0;
+    if (values.length < 3) {return 0;}
 
     let peaks = 0;
     const threshold = this.calculateMean(values) * 1.5;

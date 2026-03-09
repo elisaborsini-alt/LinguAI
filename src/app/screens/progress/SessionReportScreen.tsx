@@ -1,17 +1,15 @@
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useTheme} from '@state/hooks/useTheme';
+import {Text, Button, Card} from '@ui/components';
+import {spacing} from '@ui/theme';
 import React from 'react';
 import {
   View,
   StyleSheet,
   SafeAreaView,
   ScrollView,
-  TouchableOpacity,
 } from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
 import Animated, {FadeInUp, FadeInDown} from 'react-native-reanimated';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {Text, Button, Card} from '@ui/components';
-import {spacing} from '@ui/theme';
 
 interface SessionReportData {
   summary: string;
@@ -234,7 +232,7 @@ export const SessionReportScreen: React.FC = () => {
                     </Text>
                   )}
                   <Text variant="caption" color="secondary" style={{fontStyle: 'italic'}}>
-                    "{vocab.context}"
+                    &quot;{vocab.context}&quot;
                   </Text>
                 </View>
               ))}

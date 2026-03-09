@@ -1,4 +1,4 @@
-import {format, formatDistance, formatRelative, isToday, isYesterday} from 'date-fns';
+import {format, formatDistance, isToday, isYesterday} from 'date-fns';
 
 /**
  * Format a duration in seconds to MM:SS format

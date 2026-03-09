@@ -1,9 +1,9 @@
-import {useCallback} from 'react';
-
+import type {LoginRequest, RegisterRequest} from '@appTypes/api';
+import type {UserProfile} from '@appTypes/domain';
 import {useAuthStore} from '@state/stores/authStore';
 import {useUserStore} from '@state/stores/userStore';
-import type {UserProfile} from '@appTypes/domain';
-import type {LoginRequest, RegisterRequest} from '@appTypes/api';
+import {useCallback} from 'react';
+
 
 interface UseAuthReturn {
   user: UserProfile | null;
@@ -29,50 +29,75 @@ export const useAuth = (): UseAuthReturn => {
 
   const {setProfile, resetOnboarding} = useUserStore();
 
+  const createMockUser = useCallback(
+    (email: string, name?: string): UserProfile => ({
+      id: 'dev-user-1',
+      email,
+      name: name ?? 'Dev User',
+      nativeLanguage: 'en',
+      targetLanguage: {code: 'es', variant: 'es-ES'},
+      currentGoal: 'conversation',
+      estimatedLevels: {
+        grammar: 'A1',
+        vocabulary: 'A1',
+        fluency: 'A1',
+        overall: 'A1',
+        confidence: 0,
+        lastUpdated: new Date(),
+      },
+      preferences: {
+        correctionIntensity: 'moderate',
+        speakingSpeed: 'normal',
+        voiceGender: 'female',
+        sessionLengthMinutes: 15,
+        notificationsEnabled: true,
+        hapticFeedback: true,
+      },
+      onboardingCompleted: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }),
+    [],
+  );
+
+  const mockTokens = {
+    accessToken: 'dev-token',
+    refreshToken: 'dev-refresh',
+    expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
+  };
+
   const login = useCallback(
     async (credentials: LoginRequest) => {
       setLoading(true);
       try {
-        // TODO: Implement actual API call
+        // TODO: Replace with actual API call when backend auth is ready
         // const response = await authApi.login(credentials);
-        // storeLogin(response.user, {
-        //   accessToken: response.accessToken,
-        //   refreshToken: response.refreshToken,
-        //   expiresAt: response.expiresAt,
-        // });
-        // setProfile(response.user);
-
-        // Placeholder for now
-        throw new Error('Login API not implemented');
+        const mockUser = createMockUser(credentials.email);
+        storeLogin(mockUser, mockTokens);
+        setProfile(mockUser);
       } catch (error) {
         setLoading(false);
         throw error;
       }
     },
-    [setLoading, storeLogin, setProfile],
+    [setLoading, storeLogin, setProfile, createMockUser],
   );
 
   const register = useCallback(
     async (data: RegisterRequest) => {
       setLoading(true);
       try {
-        // TODO: Implement actual API call
+        // TODO: Replace with actual API call when backend auth is ready
         // const response = await authApi.register(data);
-        // storeLogin(response.user, {
-        //   accessToken: response.accessToken,
-        //   refreshToken: response.refreshToken,
-        //   expiresAt: response.expiresAt,
-        // });
-        // setProfile(response.user);
-
-        // Placeholder for now
-        throw new Error('Register API not implemented');
+        const mockUser = createMockUser(data.email, data.name);
+        storeLogin(mockUser, mockTokens);
+        setProfile(mockUser);
       } catch (error) {
         setLoading(false);
         throw error;
       }
     },
-    [setLoading, storeLogin, setProfile],
+    [setLoading, storeLogin, setProfile, createMockUser],
   );
 
   const logout = useCallback(async () => {

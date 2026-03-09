@@ -1,10 +1,8 @@
-import {api} from '../client';
 import type {
   CreateConversationRequest,
   CreateConversationResponse,
   SendMessageRequest,
   SendMessageResponse,
-  EndConversationRequest,
   EndConversationResponse,
   GetConversationHistoryRequest,
   GetConversationHistoryResponse,
@@ -12,6 +10,8 @@ import type {
   ListConversationsResponse,
 } from '@appTypes/api';
 import type {Conversation} from '@appTypes/domain';
+
+import {api} from '../client';
 
 export const conversationsApi = {
   /**

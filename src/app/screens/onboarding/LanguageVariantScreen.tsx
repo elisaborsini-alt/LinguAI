@@ -1,13 +1,12 @@
-import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, SafeAreaView, TouchableOpacity, ActivityIndicator} from 'react-native';
+import type {OnboardingStackScreenProps} from '@appTypes/navigation';
 import {useNavigation, useRoute} from '@react-navigation/native';
-
+import {useLanguages} from '@state/hooks/useLanguages';
 import {useTheme} from '@state/hooks/useTheme';
 import {useUserStore} from '@state/stores/userStore';
-import {useLanguages} from '@state/hooks/useLanguages';
 import {Text, Button, Card} from '@ui/components';
 import {spacing} from '@ui/theme';
-import type {OnboardingStackScreenProps} from '@appTypes/navigation';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, SafeAreaView, TouchableOpacity, ActivityIndicator} from 'react-native';
 
 type NavigationProp = OnboardingStackScreenProps<'LanguageVariant'>['navigation'];
 type RouteProp = OnboardingStackScreenProps<'LanguageVariant'>['route'];
@@ -39,7 +38,7 @@ export const LanguageVariantScreen: React.FC = () => {
   }, [variants, targetLanguage, nativeLanguage, setOnboardingData, navigation]);
 
   const handleContinue = () => {
-    if (!selected) return;
+    if (!selected) {return;}
 
     setOnboardingData({
       targetLanguage: {code: targetLanguage, variant: selected},

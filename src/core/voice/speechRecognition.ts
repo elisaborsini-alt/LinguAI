@@ -1,4 +1,5 @@
 import LiveAudioStream from 'react-native-live-audio-stream';
+
 import {audioSessionGuard} from './audioSessionGuard';
 
 // ---------------------------------------------------------------------------
@@ -180,7 +181,7 @@ class SpeechRecognitionService {
   private calculateVolume(base64: string): number {
     try {
       const bytes = this.decodeBase64(base64);
-      if (bytes.length < 2) return 0;
+      if (bytes.length < 2) {return 0;}
 
       let sum = 0;
       const sampleCount = bytes.length / 2;
@@ -208,7 +209,7 @@ class SpeechRecognitionService {
 
     // Strip padding
     let len = input.length;
-    while (len > 0 && input[len - 1] === '=') len--;
+    while (len > 0 && input[len - 1] === '=') {len--;}
 
     const outLen = (len * 3) >> 2;
     const out = new Uint8Array(outLen);
@@ -221,8 +222,8 @@ class SpeechRecognitionService {
       const d = i + 3 < len ? lookup[input.charCodeAt(i + 3)] : 0;
 
       out[j++] = (a << 2) | (b >> 4);
-      if (j < outLen) out[j++] = ((b & 0x0f) << 4) | (c >> 2);
-      if (j < outLen) out[j++] = ((c & 0x03) << 6) | d;
+      if (j < outLen) {out[j++] = ((b & 0x0f) << 4) | (c >> 2);}
+      if (j < outLen) {out[j++] = ((c & 0x03) << 6) | d;}
     }
 
     return out;

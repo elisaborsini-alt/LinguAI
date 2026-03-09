@@ -1,3 +1,4 @@
+import {useTheme} from '@state/hooks/useTheme';
 import React from 'react';
 import {View, StyleSheet, ViewStyle, LayoutChangeEvent} from 'react-native';
 import Animated, {
@@ -7,8 +8,6 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 
-import {useTheme} from '@state/hooks/useTheme';
-import {borderRadius as themeRadius, spacing} from '@ui/theme';
 
 interface ProgressBarProps {
   progress: number; // 0-100

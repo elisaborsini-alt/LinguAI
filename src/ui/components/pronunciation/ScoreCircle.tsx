@@ -1,15 +1,15 @@
+import {useTheme} from '@state/hooks/useTheme';
 import React, {useEffect} from 'react';
 import {View, StyleSheet, ViewStyle} from 'react-native';
-import Svg, {Circle, G} from 'react-native-svg';
 import Animated, {
   useSharedValue,
   useAnimatedProps,
   withTiming,
   Easing,
-  runOnJS,
 } from 'react-native-reanimated';
+import Svg, {Circle, G} from 'react-native-svg';
+
 import {Text} from '../Text';
-import {useTheme} from '@state/hooks/useTheme';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -45,8 +45,8 @@ export const ScoreCircle: React.FC<ScoreCircleProps> = ({
 
   // Get color based on score
   const getScoreColor = (value: number): string => {
-    if (value >= 80) return colors.semantic.success;
-    if (value >= 60) return colors.semantic.warning;
+    if (value >= 80) {return colors.semantic.success;}
+    if (value >= 60) {return colors.semantic.warning;}
     return colors.semantic.error;
   };
 
@@ -155,8 +155,8 @@ export const MiniScore: React.FC<MiniScoreProps> = ({
   const progress = circumference * (1 - score / 100);
 
   const getScoreColor = (value: number): string => {
-    if (value >= 80) return colors.semantic.success;
-    if (value >= 60) return colors.semantic.warning;
+    if (value >= 80) {return colors.semantic.success;}
+    if (value >= 60) {return colors.semantic.warning;}
     return colors.semantic.error;
   };
 

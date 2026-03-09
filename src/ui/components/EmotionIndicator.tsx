@@ -1,8 +1,9 @@
+import type {EmotionalState, EmotionFeedback} from '@core/emotion';
+import {useTheme} from '@state/hooks/useTheme';
 import React, {useEffect, useRef} from 'react';
 import {View, StyleSheet, Animated, Easing} from 'react-native';
+
 import {Text} from './Text';
-import {useTheme} from '@state/hooks/useTheme';
-import type {EmotionalState, EmotionFeedback} from '@core/emotion';
 
 interface EmotionIndicatorProps {
   emotion: EmotionalState;

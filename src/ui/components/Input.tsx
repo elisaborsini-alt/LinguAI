@@ -1,3 +1,5 @@
+import {useTheme} from '@state/hooks/useTheme';
+import {spacing, borderRadius, typography} from '@ui/theme';
 import React, {useState, forwardRef} from 'react';
 import {
   TextInput,
@@ -8,8 +10,6 @@ import {
   ViewStyle,
 } from 'react-native';
 
-import {useTheme} from '@state/hooks/useTheme';
-import {spacing, borderRadius, typography} from '@ui/theme';
 
 import {Text} from './Text';
 

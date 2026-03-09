@@ -1,7 +1,7 @@
+import type {VoiceState, VoiceConfig} from '@appTypes/domain';
 import {create} from 'zustand';
 import {immer} from 'zustand/middleware/immer';
 
-import type {VoiceState, VoiceConfig, SpeechRecognitionResult} from '@appTypes/domain';
 
 interface VoiceStoreState {
   // Voice state

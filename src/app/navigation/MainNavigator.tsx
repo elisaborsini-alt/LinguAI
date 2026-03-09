@@ -1,9 +1,18 @@
-import React from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {View, StyleSheet} from 'react-native';
-
-import {useTheme} from '@state/hooks/useTheme';
+// Conversation screens
+import CallScreen from '@app/screens/conversation/CallScreen';
+import ChatScreen from '@app/screens/conversation/ChatScreen';
+import ConversationHomeScreen from '@app/screens/conversation/ConversationHomeScreen';
+import PronunciationPracticeScreen from '@app/screens/conversation/PronunciationPracticeScreen';
+import PronunciationResultsScreen from '@app/screens/conversation/PronunciationResultsScreen';
+import PronunciationSessionScreen from '@app/screens/conversation/PronunciationSessionScreen';
+import ScenarioSelectScreen from '@app/screens/conversation/ScenarioSelectScreen';
+import SessionSummaryScreen from '@app/screens/conversation/SessionSummaryScreen';
+import HomeScreen from '@app/screens/home/HomeScreen';
+import ProgressDashboardScreen from '@app/screens/progress/ProgressDashboardScreen';
+import SessionReportScreen from '@app/screens/progress/SessionReportScreen';
+import TimeMachineScreen from '@app/screens/progress/TimeMachineScreen';
+import ProfileScreen from '@app/screens/settings/ProfileScreen';
+import SettingsScreen from '@app/screens/settings/SettingsScreen';
 import type {
   MainTabParamList,
   HomeStackParamList,
@@ -11,28 +20,11 @@ import type {
   ProgressStackParamList,
   SettingsStackParamList,
 } from '@appTypes/navigation';
-
-// Home screens
-import HomeScreen from '@app/screens/home/HomeScreen';
-
-// Conversation screens
-import ConversationHomeScreen from '@app/screens/conversation/ConversationHomeScreen';
-import ChatScreen from '@app/screens/conversation/ChatScreen';
-import CallScreen from '@app/screens/conversation/CallScreen';
-import ScenarioSelectScreen from '@app/screens/conversation/ScenarioSelectScreen';
-import PronunciationPracticeScreen from '@app/screens/conversation/PronunciationPracticeScreen';
-import PronunciationSessionScreen from '@app/screens/conversation/PronunciationSessionScreen';
-import PronunciationResultsScreen from '@app/screens/conversation/PronunciationResultsScreen';
-import SessionSummaryScreen from '@app/screens/conversation/SessionSummaryScreen';
-
-// Progress screens
-import ProgressDashboardScreen from '@app/screens/progress/ProgressDashboardScreen';
-import SessionReportScreen from '@app/screens/progress/SessionReportScreen';
-import TimeMachineScreen from '@app/screens/progress/TimeMachineScreen';
-
-// Settings screens
-import SettingsScreen from '@app/screens/settings/SettingsScreen';
-import ProfileScreen from '@app/screens/settings/ProfileScreen';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {useTheme} from '@state/hooks/useTheme';
+import React from 'react';
+import {View, StyleSheet} from 'react-native';
 
 // Tab icons (using simple View placeholders - replace with actual icons)
 const TabIcon = ({focused, color}: {focused: boolean; color: string}) => (

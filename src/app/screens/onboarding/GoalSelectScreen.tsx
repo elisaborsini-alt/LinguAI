@@ -1,13 +1,12 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
+import type {LearningGoal} from '@appTypes/domain';
+import type {OnboardingStackScreenProps} from '@appTypes/navigation';
 import {useNavigation, useRoute} from '@react-navigation/native';
-
 import {useTheme} from '@state/hooks/useTheme';
 import {useUserStore} from '@state/stores/userStore';
 import {Text, Button, Card} from '@ui/components';
 import {spacing} from '@ui/theme';
-import type {OnboardingStackScreenProps} from '@appTypes/navigation';
-import type {LearningGoal} from '@appTypes/domain';
+import React, {useState} from 'react';
+import {View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
 
 type NavigationProp = OnboardingStackScreenProps<'GoalSelect'>['navigation'];
 type RouteProp = OnboardingStackScreenProps<'GoalSelect'>['route'];
@@ -68,7 +67,7 @@ export const GoalSelectScreen: React.FC = () => {
   const [selected, setSelected] = useState<LearningGoal | null>(null);
 
   const handleContinue = () => {
-    if (!selected) return;
+    if (!selected) {return;}
 
     setOnboardingData({goal: selected});
 
@@ -91,10 +90,10 @@ export const GoalSelectScreen: React.FC = () => {
           STEP 4 OF 6
         </Text>
         <Text variant="headlineMedium" style={styles.title}>
-          What's your main goal?
+          What&apos;s your main goal?
         </Text>
         <Text variant="bodyLarge" color="secondary">
-          We'll tailor conversations to help you succeed
+          We&apos;ll tailor conversations to help you succeed
         </Text>
       </View>
 

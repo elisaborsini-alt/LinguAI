@@ -1,8 +1,3 @@
-import {create} from 'zustand';
-import {persist, createJSONStorage} from 'zustand/middleware';
-import {immer} from 'zustand/middleware/immer';
-
-import {storage} from '@data/storage/mmkv';
 import type {
   PronunciationPhrase,
   ReferenceAudio,
@@ -13,6 +8,11 @@ import type {
   PhraseCategory,
   PitchPoint,
 } from '@appTypes/pronunciation';
+import {storage} from '@data/storage/mmkv';
+import {create} from 'zustand';
+import {persist, createJSONStorage} from 'zustand/middleware';
+import {immer} from 'zustand/middleware/immer';
+
 
 interface PronunciationState {
   // Categories
@@ -323,7 +323,7 @@ export const usePronunciationStore = create<PronunciationState>()(
       getBestScore: (phraseId) => {
         const state = get();
         const attempts = state.phraseAttempts[phraseId] || [];
-        if (attempts.length === 0) return undefined;
+        if (attempts.length === 0) {return undefined;}
         return Math.max(...attempts.map((a) => a.overallScore));
       },
 

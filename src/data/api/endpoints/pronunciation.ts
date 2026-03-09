@@ -1,9 +1,6 @@
-import {apiClient} from '../client';
 import type {
   PronunciationPhrase,
   ReferenceAudio,
-  PronunciationAnalysis,
-  PronunciationFeedback,
   PronunciationAttempt,
   PhraseCategory,
   PhrasesListResponse,
@@ -12,6 +9,8 @@ import type {
   AnalyzeRecordingResponse,
   PracticeHistoryResponse,
 } from '@appTypes/pronunciation';
+
+import {apiClient} from '../client';
 
 const PRONUNCIATION_BASE = '/api/pronunciation';
 
@@ -38,12 +37,12 @@ export const pronunciationApi = {
     offset?: number;
   }): Promise<PhrasesListResponse> => {
     const queryParams = new URLSearchParams();
-    if (params?.categoryId) queryParams.set('categoryId', params.categoryId);
-    if (params?.difficulty) queryParams.set('difficulty', params.difficulty);
-    if (params?.languageCode) queryParams.set('languageCode', params.languageCode);
-    if (params?.search) queryParams.set('search', params.search);
-    if (params?.limit) queryParams.set('limit', params.limit.toString());
-    if (params?.offset) queryParams.set('offset', params.offset.toString());
+    if (params?.categoryId) {queryParams.set('categoryId', params.categoryId);}
+    if (params?.difficulty) {queryParams.set('difficulty', params.difficulty);}
+    if (params?.languageCode) {queryParams.set('languageCode', params.languageCode);}
+    if (params?.search) {queryParams.set('search', params.search);}
+    if (params?.limit) {queryParams.set('limit', params.limit.toString());}
+    if (params?.offset) {queryParams.set('offset', params.offset.toString());}
 
     const query = queryParams.toString();
     const url = `${PRONUNCIATION_BASE}/phrases${query ? `?${query}` : ''}`;
@@ -120,9 +119,9 @@ export const pronunciationApi = {
     offset?: number;
   }): Promise<PracticeHistoryResponse> => {
     const queryParams = new URLSearchParams();
-    if (params?.phraseId) queryParams.set('phraseId', params.phraseId);
-    if (params?.limit) queryParams.set('limit', params.limit.toString());
-    if (params?.offset) queryParams.set('offset', params.offset.toString());
+    if (params?.phraseId) {queryParams.set('phraseId', params.phraseId);}
+    if (params?.limit) {queryParams.set('limit', params.limit.toString());}
+    if (params?.offset) {queryParams.set('offset', params.offset.toString());}
 
     const query = queryParams.toString();
     const url = `${PRONUNCIATION_BASE}/history${query ? `?${query}` : ''}`;
@@ -164,8 +163,8 @@ export const pronunciationApi = {
     },
   ): Promise<ReferenceAudio> => {
     const queryParams = new URLSearchParams();
-    if (options?.variant) queryParams.set('variant', options.variant);
-    if (options?.speed) queryParams.set('speed', options.speed.toString());
+    if (options?.variant) {queryParams.set('variant', options.variant);}
+    if (options?.speed) {queryParams.set('speed', options.speed.toString());}
 
     const query = queryParams.toString();
     const url = `${PRONUNCIATION_BASE}/phrases/${phraseId}/reference${query ? `?${query}` : ''}`;

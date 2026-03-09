@@ -1,3 +1,5 @@
+import {useTheme} from '@state/hooks/useTheme';
+import {spacing, borderRadius} from '@ui/theme';
 import React from 'react';
 import {
   TouchableOpacity,
@@ -9,8 +11,6 @@ import {
   TextStyle,
 } from 'react-native';
 
-import {useTheme} from '@state/hooks/useTheme';
-import {spacing, borderRadius} from '@ui/theme';
 
 import {Text} from './Text';
 

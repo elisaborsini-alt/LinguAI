@@ -1,8 +1,8 @@
-import React from 'react';
-import {Text as RNText, TextProps as RNTextProps, StyleSheet} from 'react-native';
-
 import {useTheme} from '@state/hooks/useTheme';
 import {typography} from '@ui/theme';
+import React from 'react';
+import {Text as RNText, TextProps as RNTextProps} from 'react-native';
+
 
 type TypographyVariant =
   | 'displayLarge'

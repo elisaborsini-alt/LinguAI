@@ -1,12 +1,3 @@
-import {useState, useCallback, useEffect, useRef} from 'react';
-import {
-  AudioContext,
-  type AudioBufferSourceNode,
-} from 'react-native-audio-api';
-
-import {useAudioRecorder} from './useAudioRecorder';
-import {usePronunciationStore} from '../stores/pronunciationStore';
-import {pronunciationApi} from '@data/api/endpoints/pronunciation';
 import type {
   PronunciationPhrase,
   ReferenceAudio,
@@ -14,6 +5,16 @@ import type {
   PronunciationFeedback,
   PronunciationSessionState,
 } from '@appTypes/pronunciation';
+import {pronunciationApi} from '@data/api/endpoints/pronunciation';
+import {useState, useCallback, useEffect, useRef} from 'react';
+import {
+  AudioContext,
+  type AudioBufferSourceNode,
+} from 'react-native-audio-api';
+
+import {usePronunciationStore} from '../stores/pronunciationStore';
+
+import {useAudioRecorder} from './useAudioRecorder';
 
 interface UsePronunciationSessionOptions {
   autoPlayReference?: boolean;
@@ -134,7 +135,7 @@ export function usePronunciationSession(
 
   // Play reference audio
   const playReference = useCallback(async (): Promise<void> => {
-    if (!store.referenceAudio?.audioUrl || !audioContextRef.current) return;
+    if (!store.referenceAudio?.audioUrl || !audioContextRef.current) {return;}
 
     try {
       // Stop any current playback
@@ -257,7 +258,7 @@ export function usePronunciationSession(
 
   // Play user recording
   const playUserRecording = useCallback(async (): Promise<void> => {
-    if (!store.userRecordingUri || !audioContextRef.current) return;
+    if (!store.userRecordingUri || !audioContextRef.current) {return;}
 
     try {
       // Stop any current playback
@@ -320,7 +321,7 @@ export function usePronunciationSession(
 
   // Analyze recording
   const analyzeRecording = useCallback(async (): Promise<void> => {
-    if (!store.userRecordingUri || !store.currentPhrase) return;
+    if (!store.userRecordingUri || !store.currentPhrase) {return;}
 
     try {
       store.setAnalyzing(true);

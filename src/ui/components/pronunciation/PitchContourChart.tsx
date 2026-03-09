@@ -1,3 +1,5 @@
+import type {PitchPoint} from '@appTypes/pronunciation';
+import {useTheme} from '@state/hooks/useTheme';
 import React, {useMemo} from 'react';
 import {View, StyleSheet, ViewStyle} from 'react-native';
 import {
@@ -5,12 +7,9 @@ import {
   VictoryLine,
   VictoryAxis,
   VictoryArea,
-  VictoryTheme,
-  VictoryLegend,
 } from 'victory-native';
+
 import {Text} from '../Text';
-import {useTheme} from '@state/hooks/useTheme';
-import type {PitchPoint} from '@appTypes/pronunciation';
 
 interface PitchContourChartProps {
   referencePitchData: PitchPoint[];
@@ -42,7 +41,7 @@ export const PitchContourChart: React.FC<PitchContourChartProps> = ({
 
   // Normalize data for chart
   const normalizedRefData = useMemo(() => {
-    if (!referencePitchData || referencePitchData.length === 0) return [];
+    if (!referencePitchData || referencePitchData.length === 0) {return [];}
     return referencePitchData
       .filter(p => p.confidence > 0.5)
       .map(p => ({
@@ -52,7 +51,7 @@ export const PitchContourChart: React.FC<PitchContourChartProps> = ({
   }, [referencePitchData]);
 
   const normalizedUserData = useMemo(() => {
-    if (!userPitchData || userPitchData.length === 0) return [];
+    if (!userPitchData || userPitchData.length === 0) {return [];}
     return userPitchData
       .filter(p => p.confidence > 0.5)
       .map(p => ({
@@ -67,7 +66,7 @@ export const PitchContourChart: React.FC<PitchContourChartProps> = ({
       ...normalizedRefData.map(d => d.y),
       ...normalizedUserData.map(d => d.y),
     ];
-    if (allPitches.length === 0) return {minPitch: 80, maxPitch: 300};
+    if (allPitches.length === 0) {return {minPitch: 80, maxPitch: 300};}
     const min = Math.min(...allPitches);
     const max = Math.max(...allPitches);
     const padding = (max - min) * 0.1;
@@ -79,8 +78,8 @@ export const PitchContourChart: React.FC<PitchContourChartProps> = ({
 
   // Calculate difference regions
   const differenceRegions = useMemo(() => {
-    if (!highlightDifferences) return [];
-    if (normalizedRefData.length === 0 || normalizedUserData.length === 0) return [];
+    if (!highlightDifferences) {return [];}
+    if (normalizedRefData.length === 0 || normalizedUserData.length === 0) {return [];}
 
     const regions: Array<{start: number; end: number}> = [];
     const threshold = 30; // Hz difference threshold
@@ -266,8 +265,8 @@ export const PitchComparisonIndicator: React.FC<PitchComparisonIndicatorProps> =
   const {colors} = useTheme();
 
   const getIndicatorColor = (value: number): string => {
-    if (value >= 0.8) return colors.semantic.success;
-    if (value >= 0.5) return colors.semantic.warning;
+    if (value >= 0.8) {return colors.semantic.success;}
+    if (value >= 0.5) {return colors.semantic.warning;}
     return colors.semantic.error;
   };
 

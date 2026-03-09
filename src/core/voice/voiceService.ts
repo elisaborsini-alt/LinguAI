@@ -1,6 +1,6 @@
-import {io, Socket} from 'socket.io-client';
 import {storage} from '@data/storage/mmkv';
 import {API_BASE_URL} from '@utils/constants';
+import {io, Socket} from 'socket.io-client';
 
 export type VoiceSessionState =
   | 'disconnected'
@@ -63,7 +63,7 @@ class VoiceService {
    * Set up socket event listeners
    */
   private setupSocketListeners(): void {
-    if (!this.socket) return;
+    if (!this.socket) {return;}
 
     this.socket.on('connect', () => {
       console.log('[VoiceService] Connected to server');

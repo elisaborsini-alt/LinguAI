@@ -1,6 +1,3 @@
-import {create} from 'zustand';
-import {immer} from 'zustand/middleware/immer';
-
 import type {
   Conversation,
   Message,
@@ -10,6 +7,9 @@ import type {
   DetectedError,
   ConversationMetrics,
 } from '@appTypes/domain';
+import {create} from 'zustand';
+import {immer} from 'zustand/middleware/immer';
+
 
 interface ConversationState {
   // Current conversation
@@ -55,7 +55,7 @@ interface ConversationState {
 }
 
 export const useConversationStore = create<ConversationState>()(
-  immer((set, get) => ({
+  immer((set, _get) => ({
     // Initial state
     currentConversation: null,
     messages: [],

@@ -1,13 +1,12 @@
-import React from 'react';
-import {View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
+import type {LearningGoal} from '@appTypes/domain';
+import type {ConversationStackScreenProps} from '@appTypes/navigation';
 import {useNavigation} from '@react-navigation/native';
-
 import {useTheme} from '@state/hooks/useTheme';
 import {useUserStore} from '@state/stores/userStore';
 import {Text, Card} from '@ui/components';
 import {spacing} from '@ui/theme';
-import type {ConversationStackScreenProps} from '@appTypes/navigation';
-import type {LearningGoal} from '@appTypes/domain';
+import React from 'react';
+import {View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
 
 type NavigationProp = ConversationStackScreenProps<'ConversationHome'>['navigation'];
 
@@ -67,7 +66,7 @@ const scenarios: ScenarioOption[] = [
 export const ConversationHomeScreen: React.FC = () => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  const {profile} = useUserStore();
+  useUserStore();
 
   const handleStartChat = (scenarioId?: string) => {
     navigation.navigate('Chat', {

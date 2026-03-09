@@ -1,11 +1,10 @@
-import React from 'react';
-import {View, StyleSheet, SafeAreaView, StatusBar} from 'react-native';
+import type {AuthStackScreenProps} from '@appTypes/navigation';
 import {useNavigation} from '@react-navigation/native';
-
 import {useTheme} from '@state/hooks/useTheme';
 import {Text, Button} from '@ui/components';
 import {spacing} from '@ui/theme';
-import type {AuthStackScreenProps} from '@appTypes/navigation';
+import React from 'react';
+import {View, StyleSheet, SafeAreaView, StatusBar} from 'react-native';
 
 type NavigationProp = AuthStackScreenProps<'Welcome'>['navigation'];
 

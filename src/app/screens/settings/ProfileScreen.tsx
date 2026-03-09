@@ -1,3 +1,10 @@
+import type {SettingsStackScreenProps} from '@appTypes/navigation';
+import {useNavigation} from '@react-navigation/native';
+import {useTheme} from '@state/hooks/useTheme';
+import {useAuthStore} from '@state/stores/authStore';
+import {useUserStore} from '@state/stores/userStore';
+import {Text, Button, Input, Avatar, Card} from '@ui/components';
+import {spacing} from '@ui/theme';
 import React, {useState} from 'react';
 import {
   View,
@@ -7,14 +14,6 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {useUserStore} from '@state/stores/userStore';
-import {useAuthStore} from '@state/stores/authStore';
-import {Text, Button, Input, Avatar, Card} from '@ui/components';
-import {spacing} from '@ui/theme';
-import type {SettingsStackScreenProps} from '@appTypes/navigation';
 
 type NavigationProp = SettingsStackScreenProps<'Profile'>['navigation'];
 
@@ -231,7 +230,7 @@ const getLanguageName = (code?: string): string => {
 };
 
 const formatGoal = (goal?: string): string => {
-  if (!goal) return 'Not set';
+  if (!goal) {return 'Not set';}
   return goal.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 };
 

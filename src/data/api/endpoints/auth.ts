@@ -1,4 +1,3 @@
-import {api} from '../client';
 import type {
   LoginRequest,
   RegisterRequest,
@@ -6,6 +5,8 @@ import type {
   RefreshTokenRequest,
   RefreshTokenResponse,
 } from '@appTypes/api';
+
+import {api} from '../client';
 
 export const authApi = {
   /**

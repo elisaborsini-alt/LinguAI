@@ -1,3 +1,9 @@
+import type {ProgressStackScreenProps} from '@appTypes/navigation';
+import type {TimeMachineResult} from '@data/api/endpoints/progress';
+import {useNavigation} from '@react-navigation/native';
+import {useTheme} from '@state/hooks/useTheme';
+import {Text} from '@ui/components';
+import {spacing, borderRadius} from '@ui/theme';
 import React, {useState, useRef, useCallback} from 'react';
 import {
   View,
@@ -6,17 +12,9 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import Animated, {FadeInUp} from 'react-native-reanimated';
 import {AudioContext} from 'react-native-audio-api';
-
 import Config from 'react-native-config';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {Text} from '@ui/components';
-import {spacing, borderRadius} from '@ui/theme';
-import type {TimeMachineResult} from '@data/api/endpoints/progress';
-import type {ProgressStackScreenProps} from '@appTypes/navigation';
+import Animated, {FadeInUp} from 'react-native-reanimated';
 
 const API_BASE_URL = Config.API_BASE_URL || 'http://localhost:3000/api';
 

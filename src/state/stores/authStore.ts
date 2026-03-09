@@ -1,9 +1,9 @@
+import type {UserProfile} from '@appTypes/domain';
+import {storage} from '@data/storage/mmkv';
 import {create} from 'zustand';
 import {persist, createJSONStorage} from 'zustand/middleware';
 import {immer} from 'zustand/middleware/immer';
 
-import type {UserProfile} from '@appTypes/domain';
-import {storage} from '@data/storage/mmkv';
 
 interface AuthTokens {
   accessToken: string;
@@ -99,7 +99,7 @@ export const useAuthStore = create<AuthState>()(
 
       isTokenExpired: () => {
         const {tokens} = get();
-        if (!tokens) return true;
+        if (!tokens) {return true;}
         return Date.now() >= tokens.expiresAt;
       },
     })),

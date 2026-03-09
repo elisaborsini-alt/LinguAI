@@ -1,5 +1,6 @@
-import {api} from '../client';
 import type {UserProfile, LevelEstimates, LanguageCode, LanguageVariant, LearningGoal} from '@appTypes/domain';
+
+import {api} from '../client';
 
 export interface UpdateProfileRequest {
   name?: string;

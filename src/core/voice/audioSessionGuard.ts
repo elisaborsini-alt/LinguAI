@@ -179,7 +179,7 @@ class AudioSessionGuard {
   // -------------------------------------------------------------------------
 
   private setState(next: AudioSessionState): void {
-    if (this.state === next) return;
+    if (this.state === next) {return;}
     const prev = this.state;
     this.state = next;
     console.log(`[AudioGuard] ${prev} → ${next}`);

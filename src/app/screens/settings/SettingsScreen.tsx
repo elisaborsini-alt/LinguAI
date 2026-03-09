@@ -1,13 +1,12 @@
-import React from 'react';
-import {View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Alert} from 'react-native';
+import type {SettingsStackScreenProps} from '@appTypes/navigation';
 import {useNavigation} from '@react-navigation/native';
-
-import {useTheme} from '@state/hooks/useTheme';
 import {useAuth} from '@state/hooks/useAuth';
+import {useTheme} from '@state/hooks/useTheme';
 import {useUserStore} from '@state/stores/userStore';
 import {Text, Card, Avatar, Divider} from '@ui/components';
 import {spacing} from '@ui/theme';
-import type {SettingsStackScreenProps} from '@appTypes/navigation';
+import React from 'react';
+import {View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Alert} from 'react-native';
 
 type NavigationProp = SettingsStackScreenProps<'Settings'>['navigation'];
 
@@ -167,7 +166,7 @@ interface SettingsItemProps {
 }
 
 const SettingsItem: React.FC<SettingsItemProps> = ({title, value, onPress, disabled}) => {
-  const {colors} = useTheme();
+  useTheme();
 
   return (
     <TouchableOpacity
@@ -206,7 +205,7 @@ const getLanguageName = (code?: string): string => {
 };
 
 const formatGoal = (goal?: string): string => {
-  if (!goal) return 'Not set';
+  if (!goal) {return 'Not set';}
   return goal.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 };
 

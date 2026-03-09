@@ -1,3 +1,9 @@
+import type {AuthStackScreenProps} from '@appTypes/navigation';
+import {useNavigation} from '@react-navigation/native';
+import {useAuth} from '@state/hooks/useAuth';
+import {useTheme} from '@state/hooks/useTheme';
+import {Text, Button, Input} from '@ui/components';
+import {spacing} from '@ui/theme';
 import React, {useState} from 'react';
 import {
   View,
@@ -8,13 +14,6 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {useAuth} from '@state/hooks/useAuth';
-import {Text, Button, Input} from '@ui/components';
-import {spacing} from '@ui/theme';
-import type {AuthStackScreenProps} from '@appTypes/navigation';
 
 type NavigationProp = AuthStackScreenProps<'Login'>['navigation'];
 
@@ -25,7 +24,7 @@ export const LoginScreen: React.FC = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword] = useState(false);
   const [errors, setErrors] = useState<{email?: string; password?: string}>({});
 
   const validate = (): boolean => {
@@ -48,7 +47,7 @@ export const LoginScreen: React.FC = () => {
   };
 
   const handleLogin = async () => {
-    if (!validate()) return;
+    if (!validate()) {return;}
 
     try {
       await login({email, password});
@@ -130,7 +129,7 @@ export const LoginScreen: React.FC = () => {
 
             <View style={styles.registerLink}>
               <Text variant="bodyMedium" color="secondary">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
               </Text>
               <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                 <Text variant="bodyMedium" color="link">

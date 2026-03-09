@@ -1,9 +1,9 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
+import type {VoiceState, LearningGoal} from '@appTypes/domain';
 import {voiceService, speechRecognition, textToSpeech} from '@core/voice';
 import {audioSessionGuard} from '@core/voice/audioSessionGuard';
-import {useVoiceStore} from '@state/stores/voiceStore';
 import {useUserStore} from '@state/stores/userStore';
-import type {VoiceState, LearningGoal} from '@appTypes/domain';
+import {useVoiceStore} from '@state/stores/voiceStore';
+import {useCallback, useEffect, useRef, useState} from 'react';
 
 interface UseVoiceReturn {
   // State
@@ -236,7 +236,7 @@ export const useVoice = (): UseVoiceReturn => {
   }, []);
 
   const startListening = useCallback(async () => {
-    if (isListeningRef.current || isMuted || isAISpeaking) return;
+    if (isListeningRef.current || isMuted || isAISpeaking) {return;}
 
     try {
       clearTranscript();
@@ -258,7 +258,7 @@ export const useVoice = (): UseVoiceReturn => {
   }, [isMuted, isAISpeaking, clearTranscript, clearError, setError]);
 
   const stopListening = useCallback(async () => {
-    if (!isListeningRef.current) return;
+    if (!isListeningRef.current) {return;}
 
     try {
       isListeningRef.current = false;

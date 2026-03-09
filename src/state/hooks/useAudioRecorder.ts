@@ -1,7 +1,7 @@
 import {useState, useCallback, useRef, useEffect} from 'react';
-import LiveAudioStream from 'react-native-live-audio-stream';
-import RNFS from 'react-native-fs';
 import {Platform} from 'react-native';
+import RNFS from 'react-native-fs';
+import LiveAudioStream from 'react-native-live-audio-stream';
 
 interface AudioRecorderOptions {
   maxDuration?: number; // seconds
@@ -58,7 +58,7 @@ export function useAudioRecorder(
 
   // Calculate audio level from raw PCM data
   const calculateAudioLevel = useCallback((data: number[]): number => {
-    if (data.length === 0) return 0;
+    if (data.length === 0) {return 0;}
 
     // Calculate RMS (Root Mean Square)
     const sum = data.reduce((acc, sample) => acc + sample * sample, 0);
@@ -86,7 +86,7 @@ export function useAudioRecorder(
         // Combine bytes (little-endian)
         let sample = (high << 8) | low;
         // Convert to signed
-        if (sample >= 32768) sample -= 65536;
+        if (sample >= 32768) {sample -= 65536;}
         samples.push(sample);
       }
 

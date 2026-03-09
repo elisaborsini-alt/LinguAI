@@ -1,15 +1,15 @@
+
+import {useTheme} from '@state/hooks/useTheme';
+import {useAuthStore} from '@state/stores/authStore';
+import {useUserStore} from '@state/stores/userStore';
+import {Text, Button} from '@ui/components';
+import {spacing} from '@ui/theme';
 import React from 'react';
 import {View, StyleSheet, SafeAreaView} from 'react-native';
 
-import {useTheme} from '@state/hooks/useTheme';
-import {useUserStore} from '@state/stores/userStore';
-import {useAuthStore} from '@state/stores/authStore';
-import {Text, Button} from '@ui/components';
-import {spacing} from '@ui/theme';
-
 export const OnboardingCompleteScreen: React.FC = () => {
   const {colors} = useTheme();
-  const {onboardingData, setProfile} = useUserStore();
+  const {onboardingData} = useUserStore();
   const {user, updateUser} = useAuthStore();
 
   const handleStart = () => {
@@ -108,7 +108,7 @@ const TipItem: React.FC<TipItemProps> = ({text}) => {
 };
 
 const formatGoal = (goal?: string): string => {
-  if (!goal) return '';
+  if (!goal) {return '';}
   return goal
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (l) => l.toUpperCase());

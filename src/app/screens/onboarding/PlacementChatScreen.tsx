@@ -1,3 +1,9 @@
+import type {OnboardingStackScreenProps} from '@appTypes/navigation';
+import {placementApi} from '@data/api/endpoints/placement';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useTheme} from '@state/hooks/useTheme';
+import {Text, TypingIndicator} from '@ui/components';
+import {spacing, borderRadius} from '@ui/theme';
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {
   View,
@@ -9,7 +15,6 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -17,12 +22,6 @@ import Animated, {
   Easing,
   FadeIn,
 } from 'react-native-reanimated';
-
-import {useTheme} from '@state/hooks/useTheme';
-import {Text, TypingIndicator} from '@ui/components';
-import {spacing, borderRadius} from '@ui/theme';
-import {placementApi} from '@data/api/endpoints/placement';
-import type {OnboardingStackScreenProps} from '@appTypes/navigation';
 
 // ============================================
 // Types
@@ -93,7 +92,7 @@ export const PlacementChatScreen: React.FC = () => {
   // ============================================
 
   const startPlacement = useCallback(async () => {
-    if (startedRef.current) return;
+    if (startedRef.current) {return;}
     startedRef.current = true;
 
     setIsLoading(true);
@@ -170,13 +169,13 @@ export const PlacementChatScreen: React.FC = () => {
 
   const handleSend = () => {
     const text = inputText.trim();
-    if (!text || isLoading) return;
+    if (!text || isLoading) {return;}
     setInputText('');
     sendResponse(text);
   };
 
   const handleRetry = () => {
-    if (!failedMessage) return;
+    if (!failedMessage) {return;}
     // Remove the failed message before retrying
     setMessages(prev => prev.filter(m => !m.failed));
     sendResponse(failedMessage);
