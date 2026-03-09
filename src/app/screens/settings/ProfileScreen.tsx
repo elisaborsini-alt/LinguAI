@@ -2,7 +2,6 @@ import type {SettingsStackScreenProps} from '@appTypes/navigation';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '@state/hooks/useTheme';
 import {useAuthStore} from '@state/stores/authStore';
-import {useUserStore} from '@state/stores/userStore';
 import {Text, Button, Input, Avatar, Card} from '@ui/components';
 import {spacing} from '@ui/theme';
 import React, {useState} from 'react';
@@ -20,8 +19,7 @@ type NavigationProp = SettingsStackScreenProps<'Profile'>['navigation'];
 export const ProfileScreen: React.FC = () => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  const {profile, updateProfile} = useUserStore();
-  const {updateUser} = useAuthStore();
+  const {user: profile, updateUser} = useAuthStore();
 
   const [name, setName] = useState(profile?.name || '');
   const [isEditing, setIsEditing] = useState(false);
@@ -36,7 +34,6 @@ export const ProfileScreen: React.FC = () => {
     setIsSaving(true);
     try {
       // Update locally
-      updateProfile({name: name.trim()});
       updateUser({name: name.trim()});
 
       // TODO: Call API to update profile

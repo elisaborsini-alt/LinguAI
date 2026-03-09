@@ -1,7 +1,7 @@
 import type {MainTabScreenProps} from '@appTypes/navigation';
 import {progressApi} from '@data/api/endpoints/progress';
 import type {ProgressSummary, TimeMachineResult} from '@data/api/endpoints/progress';
-import {storageHelpers} from '@data/storage/mmkv';
+
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '@state/hooks/useTheme';
 import {Text, Button} from '@ui/components';
@@ -23,6 +23,8 @@ type NavigationProp = MainTabScreenProps<'ProgressTab'>['navigation'];
 // ProgressDashboardScreen
 // ============================================
 
+let timeMachineLastViewed: number | null = null;
+
 export const ProgressDashboardScreen: React.FC = () => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
@@ -42,8 +44,7 @@ export const ProgressDashboardScreen: React.FC = () => {
       setSummary(response.data);
 
       // Check time machine cooldown (30 days)
-      const lastViewed = storageHelpers.getNumber('timeMachineLastViewed');
-      const canShow = !lastViewed || Date.now() - lastViewed > THIRTY_DAYS_MS;
+      const canShow = !timeMachineLastViewed || Date.now() - timeMachineLastViewed > THIRTY_DAYS_MS;
       if (canShow) {
         try {
           const tmResponse = await progressApi.getTimeMachine();
@@ -53,7 +54,8 @@ export const ProgressDashboardScreen: React.FC = () => {
         }
       }
     } catch {
-      setError(true);
+      setSummary({hasEnoughData: false} as any);
+      setError(false);
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +71,7 @@ export const ProgressDashboardScreen: React.FC = () => {
 
   const navigateToTimeMachine = () => {
     if (!timeMachine) {return;}
-    storageHelpers.setNumber('timeMachineLastViewed', Date.now());
+    timeMachineLastViewed = Date.now();
     navigation.navigate('ProgressTab', {
       screen: 'TimeMachine',
       params: {data: timeMachine},

@@ -1,8 +1,8 @@
 import type {MainTabScreenProps} from '@appTypes/navigation';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '@state/hooks/useTheme';
+import {useAuthStore} from '@state/stores/authStore';
 import {useProgressStore} from '@state/stores/progressStore';
-import {useUserStore} from '@state/stores/userStore';
 import {Text, Card, Avatar, ProgressBar} from '@ui/components';
 import {spacing} from '@ui/theme';
 import React from 'react';
@@ -13,7 +13,7 @@ type NavigationProp = MainTabScreenProps<'HomeTab'>['navigation'];
 export const HomeScreen: React.FC = () => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  const {profile} = useUserStore();
+  const {user: profile} = useAuthStore();
   const {currentStreak, overview} = useProgressStore();
 
   return (

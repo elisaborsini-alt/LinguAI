@@ -24,12 +24,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useTheme} from '@state/hooks/useTheme';
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
-
-// Tab icons (using simple View placeholders - replace with actual icons)
-const TabIcon = ({focused, color}: {focused: boolean; color: string}) => (
-  <View style={[styles.tabIcon, {backgroundColor: focused ? color : 'transparent'}]} />
-);
+import {Text} from 'react-native';
 
 // Stack navigators for each tab
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
@@ -124,7 +119,7 @@ export const MainNavigator: React.FC = () => {
         component={HomeStackNavigator}
         options={{
           tabBarLabel: 'Home',
-          tabBarIcon: ({focused, color}) => <TabIcon focused={focused} color={color} />,
+          tabBarIcon: () => <Text style={{fontSize: 22}}>🏠</Text>,
         }}
       />
       <Tab.Screen
@@ -132,7 +127,7 @@ export const MainNavigator: React.FC = () => {
         component={ConversationStackNavigator}
         options={{
           tabBarLabel: 'Practice',
-          tabBarIcon: ({focused, color}) => <TabIcon focused={focused} color={color} />,
+          tabBarIcon: () => <Text style={{fontSize: 22}}>💬</Text>,
         }}
       />
       <Tab.Screen
@@ -140,7 +135,7 @@ export const MainNavigator: React.FC = () => {
         component={ProgressStackNavigator}
         options={{
           tabBarLabel: 'Progress',
-          tabBarIcon: ({focused, color}) => <TabIcon focused={focused} color={color} />,
+          tabBarIcon: () => <Text style={{fontSize: 22}}>📊</Text>,
         }}
       />
       <Tab.Screen
@@ -148,21 +143,11 @@ export const MainNavigator: React.FC = () => {
         component={SettingsStackNavigator}
         options={{
           tabBarLabel: 'Settings',
-          tabBarIcon: ({focused, color}) => <TabIcon focused={focused} color={color} />,
+          tabBarIcon: () => <Text style={{fontSize: 22}}>⚙️</Text>,
         }}
       />
     </Tab.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  tabIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: 'currentColor',
-  },
-});
 
 export default MainNavigator;

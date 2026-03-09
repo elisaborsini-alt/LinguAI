@@ -2,6 +2,7 @@ import type {SettingsStackScreenProps} from '@appTypes/navigation';
 import {useNavigation} from '@react-navigation/native';
 import {useAuth} from '@state/hooks/useAuth';
 import {useTheme} from '@state/hooks/useTheme';
+import {useAuthStore} from '@state/stores/authStore';
 import {useUserStore} from '@state/stores/userStore';
 import {Text, Card, Avatar, Divider} from '@ui/components';
 import {spacing} from '@ui/theme';
@@ -14,7 +15,9 @@ export const SettingsScreen: React.FC = () => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const {logout} = useAuth();
-  const {profile, preferences} = useUserStore();
+  const {user} = useAuthStore();
+  const {preferences} = useUserStore();
+  const profile = user;
 
   const handleLogout = () => {
     Alert.alert(
